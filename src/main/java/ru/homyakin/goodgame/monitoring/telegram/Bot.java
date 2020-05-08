@@ -13,16 +13,27 @@ public class Bot extends TelegramLongPollingBot {
     private static final Logger logger = LoggerFactory.getLogger(Bot.class);
     private final String token;
     private final String username;
+    private final Long adminId;
 
     public Bot(BotConfiguration configuration) {
         token = configuration.getToken();
         username = configuration.getUsername();
+        adminId = configuration.getAdminId();
     }
 
 
     @Override
     public void onUpdateReceived(Update update) {
-
+        if (update.hasMessage()) {
+            if (update.getMessage().isUserMessage()) {
+                if (update.getMessage().getChatId().equals(adminId)) {
+                    var message = new SendMessage()
+                        .setChatId(adminId)
+                        .setText("OK");
+                    sendMessage(message);
+                }
+            }
+        }
     }
 
     public void sendMessage(SendMessage message) {

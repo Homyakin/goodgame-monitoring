@@ -4,6 +4,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import ru.homyakin.goodgame.monitoring.telegram.Bot;
 
@@ -23,6 +24,7 @@ public class Application implements CommandLineRunner {
     }
 
     public static void main(String[] args) {
+        ApiContextInitializer.init();
         SpringApplication.run(Application.class, args);
     }
 }

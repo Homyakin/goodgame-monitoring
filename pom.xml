@@ -11,6 +11,7 @@
     <properties>
         <java.version>14</java.version>
         <spring.version>2.2.6.RELEASE</spring.version>
+        <start-class>ru.homyakin.goodgame.monitoring.Application</start-class>
     </properties>
 
     <dependencies>
@@ -44,6 +45,17 @@
         <sourceDirectory>src/main/java</sourceDirectory>
         <testSourceDirectory>src/test/java</testSourceDirectory>
         <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>

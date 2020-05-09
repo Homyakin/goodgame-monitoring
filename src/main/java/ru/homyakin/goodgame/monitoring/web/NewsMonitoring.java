@@ -34,6 +34,7 @@ public class NewsMonitoring {
         while (!news.get(lastIdx).getLink().equals(lastNewsLink) && lastIdx < news.size()) {
             ++lastIdx;
         }
+        lastNewsLink = news.get(0).getLink();
         for (int i = lastIdx - 1; i >= 0; --i) {
             bot.sendMessage(createMessageFromNews(news.get(i)));
         }
@@ -41,7 +42,7 @@ public class NewsMonitoring {
 
     private SendMessage createMessageFromNews(News news) {
         var message = new SendMessage();
-        var text = news.getInfo() + "\n\n" + news.getInfo() + "\n\n" + news.getLink();
+        var text = news.getInfo() + "\n\n" + news.getText() + "\n\n" + news.getLink();
         return message
             .setChatId("@goodgame_monitoring")
             .disableWebPagePreview()

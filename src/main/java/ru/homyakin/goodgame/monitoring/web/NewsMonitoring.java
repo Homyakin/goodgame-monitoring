@@ -45,6 +45,7 @@ public class NewsMonitoring {
             ++lastIdx;
         }
         lastNewsLink = news.get(0).getLink();
+        lastNewsDate = news.get(0).getDate();
         if (lastIdx != 0) {
             logger.info("Got {} new news", lastIdx);
         }

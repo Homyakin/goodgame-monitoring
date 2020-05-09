@@ -16,6 +16,7 @@ public class NewsMonitoring {
     private final NewsScanner newsScanner;
     private final Bot bot;
     private String lastNewsLink = null;
+    private Long lastNewsDate = null;
 
     public NewsMonitoring(NewsScanner newsScanner, Bot bot) {
         this.newsScanner = newsScanner;
@@ -28,10 +29,15 @@ public class NewsMonitoring {
         if (lastNewsLink == null) {
             logger.info("Initialized monitoring");
             lastNewsLink = news.get(0).getLink();
+            lastNewsDate = news.get(0).getDate();
         }
 
         int lastIdx = 0;
-        while (!news.get(lastIdx).getLink().equals(lastNewsLink) && lastIdx < news.size()) {
+        while (
+            !news.get(lastIdx).getLink().equals(lastNewsLink) &&
+            lastNewsDate > news.get(lastIdx).getDate() &&
+            lastIdx < news.size()
+        ) {
             ++lastIdx;
         }
         lastNewsLink = news.get(0).getLink();

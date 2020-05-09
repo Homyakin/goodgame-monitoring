@@ -73,6 +73,6 @@ public class NewsMonitoring {
     }
 
     private String generateTextFromNews(News news) {
-        return news.getInfo() + "\n" + news.getText() + "\n" + news.getLink();
+        return news.getInfo() + "\n\n" + news.getText() + "\n\n" + news.getLink();
     }
 }

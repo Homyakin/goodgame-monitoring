@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -37,6 +38,14 @@ public class Bot extends TelegramLongPollingBot {
     }
 
     public void sendMessage(SendMessage message) {
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            logger.error("Something went wrong during sending message", e);
+        }
+    }
+
+    public void sendMessage(SendPhoto message) {
         try {
             execute(message);
         } catch (TelegramApiException e) {

@@ -1,5 +1,8 @@
 package ru.homyakin.goodgame.monitoring.web;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
@@ -7,6 +10,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import ru.homyakin.goodgame.monitoring.telegram.Bot;
 import ru.homyakin.goodgame.monitoring.web.models.News;
 
@@ -42,16 +46,30 @@ public class NewsMonitoring {
         }
         lastNewsLink = news.get(0).getLink();
         for (int i = lastIdx - 1; i >= 0; --i) {
-            bot.sendMessage(createMessageFromNews(news.get(i)));
+            try {
+                bot.sendMessage(creteSendPhotoFromNews(news.get(i)));
+            } catch (IOException e) {
+                logger.error("Error during sending photo", e);
+                bot.sendMessage(createMessageFromNews(news.get(i)));
+            }
         }
     }
 
     private SendMessage createMessageFromNews(News news) {
-        var message = new SendMessage();
-        var text = news.getInfo() + "\n\n" + news.getText() + "\n\n" + news.getLink();
-        return message
+        return new SendMessage()
             .setChatId("@goodgame_monitoring")
             .disableWebPagePreview()
-            .setText(text);
+            .setText(generateTextFromNews(news));
+    }
+
+    private SendPhoto creteSendPhotoFromNews(News news) throws IOException {
+        return new SendPhoto()
+            .setPhoto(news.getLink(), new URL(news.getImageLink()).openStream())
+            .setChatId("@goodgame_monitoring")
+            .setCaption(generateTextFromNews(news));
+    }
+
+    private String generateTextFromNews(News news) {
+        return news.getInfo() + "\n" + news.getText() + "\n" + news.getLink();
     }
 }

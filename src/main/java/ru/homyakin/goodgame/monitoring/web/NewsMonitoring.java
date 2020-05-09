@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import ru.homyakin.goodgame.monitoring.telegram.Bot;
+import ru.homyakin.goodgame.monitoring.telegram.BotConfiguration;
 import ru.homyakin.goodgame.monitoring.web.models.News;
 
 @Service
@@ -19,12 +20,14 @@ public class NewsMonitoring {
     private final static Logger logger = LoggerFactory.getLogger(NewsMonitoring.class);
     private final NewsScanner newsScanner;
     private final Bot bot;
+    private final String channel;
     private String lastNewsLink = null;
     private Long lastNewsDate = null;
 
-    public NewsMonitoring(NewsScanner newsScanner, Bot bot) {
+    public NewsMonitoring(NewsScanner newsScanner, Bot bot, BotConfiguration botConfiguration) {
         this.newsScanner = newsScanner;
         this.bot = bot;
+        this.channel = botConfiguration.getChannel();
     }
 
     @Scheduled(fixedDelay = 60 * 1000)
@@ -57,7 +60,7 @@ public class NewsMonitoring {
 
     private SendMessage createMessageFromNews(News news) {
         return new SendMessage()
-            .setChatId("@goodgame_monitoring")
+            .setChatId(channel)
             .disableWebPagePreview()
             .setText(generateTextFromNews(news));
     }
@@ -65,7 +68,7 @@ public class NewsMonitoring {
     private SendPhoto creteSendPhotoFromNews(News news) throws IOException {
         return new SendPhoto()
             .setPhoto(news.getLink(), new URL(news.getImageLink()).openStream())
-            .setChatId("@goodgame_monitoring")
+            .setChatId(channel)
             .setCaption(generateTextFromNews(news));
     }
 

@@ -45,6 +45,9 @@ public class NewsMonitoring {
             ++lastIdx;
         }
         lastNewsLink = news.get(0).getLink();
+        if (lastIdx != 0) {
+            logger.info("Got {} new news", lastIdx);
+        }
         for (int i = lastIdx - 1; i >= 0; --i) {
             try {
                 bot.sendMessage(creteSendPhotoFromNews(news.get(i)));

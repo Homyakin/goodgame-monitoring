@@ -1,12 +1,9 @@
 package ru.homyakin.goodgame.monitoring.web;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -41,9 +38,9 @@ public class NewsMonitoring {
 
         int lastIdx = 0;
         while (
-            !news.get(lastIdx).getLink().equals(lastNewsLink) &&
-            lastNewsDate > news.get(lastIdx).getDate() &&
-            lastIdx < news.size()
+            (!news.get(lastIdx).getLink().equals(lastNewsLink) ||
+                lastNewsDate < news.get(lastIdx).getDate()) &&
+                lastIdx < news.size()
         ) {
             ++lastIdx;
         }

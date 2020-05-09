@@ -56,15 +56,42 @@ public class NewsScanner {
         return news;
     }
 
-    private News createNews(Element element) {
-        var imageBlock = element.getElementsByClass("img-block").get(0);
-        var infoBlock = element.getElementsByClass("info-block").get(0);
-        var info = infoBlock
+    private News createNews(Element newsElement) {
+        var imageLink = getImageLink(newsElement);
+        var infoBlock = getInfoBlock(newsElement);
+        var info = getInfo(infoBlock);
+        var text = getText(infoBlock);
+        var link = getLink(infoBlock);
+        var date = getDate(infoBlock);
+        return new News(imageLink, info, text, link, date);
+    }
+
+    private Element getInfoBlock(Element newsElement) {
+        return newsElement
+            .getElementsByClass("info-block")
+            .get(0);
+    }
+
+    private String getImageLink(Element newsElement) {
+        return "https://static.goodgame.ru" + newsElement
+            .getElementsByClass("img-block")
+            .get(0)
+            .getElementsByTag("a")
+            .get(0)
+            .attributes()
+            .get("gg-webp");
+    }
+
+    private String getInfo(Element infoElement) {
+        return infoElement
             .getElementsByTag("h3")
             .get(0)
             .text();
+    }
+
+    private String getText(Element infoElement) {
         var text = "";
-        var textBlocks = infoBlock.getElementsByClass("text-block");
+        var textBlocks = infoElement.getElementsByClass("text-block");
         if (textBlocks.size() != 0) { //TODO For example tournaments don't have a text field https://goodgame.ru/cup/9398/
             text = textBlocks
                 .get(0)
@@ -72,25 +99,26 @@ public class NewsScanner {
                 .get(0)
                 .text();
         }
-        var link = infoBlock
+        return text;
+    }
+
+    private String getLink(Element infoElement) {
+        return infoElement
             .getElementsByTag("a")
             .get(0)
             .attributes()
             .get("href");
-        var imageLink = "https://static.goodgame.ru" + imageBlock
-            .getElementsByTag("a")
-            .get(0)
-            .attributes()
-            .get("gg-webp");
-        var date = Long.valueOf(
-            infoBlock
-            .getElementsByClass("date")
-            .get(0)
-            .getElementsByTag("gg-local-time")
-            .get(0)
-            .attributes()
-            .get("utc-timestamp")
+    }
+
+    private Long getDate(Element infoElement) {
+        return Long.valueOf(
+            infoElement
+                .getElementsByClass("date")
+                .get(0)
+                .getElementsByTag("gg-local-time")
+                .get(0)
+                .attributes()
+                .get("utc-timestamp")
         );
-        return new News(imageLink, info, text, link, date);
     }
 }

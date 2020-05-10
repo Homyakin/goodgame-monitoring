@@ -37,10 +37,8 @@ public class NewsMonitoring {
         }
 
         int lastIdx = 0;
-        while (
-            (!news.get(lastIdx).getLink().equals(lastNewsLink) ||
-                lastNewsDate < news.get(lastIdx).getDate()) &&
-                lastIdx < news.size()
+        while (lastIdx < news.size() && (!news.get(lastIdx).getLink().equals(lastNewsLink) ||
+                (lastNewsDate < news.get(lastIdx).getDate() && news.get(lastIdx).getLink().equals(lastNewsLink)))
         ) {
             ++lastIdx;
         }

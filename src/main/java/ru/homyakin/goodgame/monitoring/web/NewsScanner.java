@@ -6,6 +6,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import org.jsoup.Jsoup;
@@ -21,6 +24,7 @@ public class NewsScanner {
     private final static Logger logger = LoggerFactory.getLogger(NewsScanner.class);
     private final HttpClient client;
     private final HttpRequest request;
+    private final DateTimeFormatter formatter;
 
     public NewsScanner() {
         client = HttpClient.newHttpClient();
@@ -28,6 +32,7 @@ public class NewsScanner {
             .uri(URI.create("https://goodgame.ru/news/"))
             .GET()
             .build();
+        formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
     }
 
     public List<News> getLastNews() {
@@ -72,13 +77,26 @@ public class NewsScanner {
     }
 
     private String getImageLink(Element newsElement) {
-        return "https://static.goodgame.ru" + newsElement
+        var link = newsElement
             .getElementsByClass("img-block")
             .get(0)
             .getElementsByTag("a")
             .get(0)
             .attributes()
             .get("gg-webp");
+        if (link.equals("")) { //tournaments
+            link = newsElement
+                .getElementsByClass("img-block")
+                .get(0)
+                .getElementsByTag("a")
+                .get(0)
+                .attributes()
+                .get("style");
+            link = link.substring(23, link.length() - 2);
+        } else {
+            link = "https://static.goodgame.ru" + link;
+        }
+        return link;
     }
 
     private String getInfo(Element infoElement) {
@@ -91,7 +109,7 @@ public class NewsScanner {
     private String getText(Element infoElement) {
         var text = "";
         var textBlocks = infoElement.getElementsByClass("text-block");
-        if (textBlocks.size() != 0) { //TODO For example tournaments don't have a text field https://goodgame.ru/cup/9398/
+        if (textBlocks.size() != 0) {
             var textTag = textBlocks
                 .get(0)
                 .getElementsByTag("p");
@@ -106,6 +124,8 @@ public class NewsScanner {
             if (listBlock.size() != 0) {
                 text += "\n\n" + getList(listBlock.get(0));
             }
+        } else {
+            text = getTournamentInfo(infoElement);
         }
         return text;
     }
@@ -125,6 +145,43 @@ public class NewsScanner {
             .get(0)
             .attributes()
             .get("href");
+    }
+
+    private String getTournamentInfo(Element infoElement) {
+        var builder = new StringBuilder("");
+        var update = infoElement.getElementsByClass("update-block");
+        var updateText = "";
+        if (update.size() != 0) {
+            updateText = update
+                .get(0)
+                .getElementsByTag("p")
+                .get(0)
+                .text() + "\n\n";
+        }
+        var tournament = infoElement.getElementsByClass("tournaments-wrap");
+        var tournamentText = new StringBuilder("");
+        if (tournament.size() != 0) {
+            var labels = tournament.get(0).getElementsByClass("label");
+            var names = tournament.get(0).getElementsByClass("name");
+            int size = labels.size();
+            for (int i = 0; i < size; ++i) {
+                if (names.get(i).getElementsByTag("gg-local-time").size() != 0) {
+                    var timestamp = Long.valueOf(
+                        names
+                            .get(i)
+                            .getElementsByTag("gg-local-time")
+                            .get(0)
+                            .attributes()
+                            .get("utc-timestamp")
+                    );
+                    var dateTime = Instant.ofEpochSecond(timestamp).atZone(ZoneId.of("Europe/Moscow")).toLocalDateTime();
+                    tournamentText.append(labels.get(i).text()).append(": ").append(dateTime.format(formatter)).append("\n");
+                } else {
+                    tournamentText.append(labels.get(i).text()).append(": ").append(names.get(i).text()).append("\n");
+                }
+            }
+        }
+        return builder.append(updateText).append(tournamentText).toString();
     }
 
     private Long getDate(Element infoElement) {

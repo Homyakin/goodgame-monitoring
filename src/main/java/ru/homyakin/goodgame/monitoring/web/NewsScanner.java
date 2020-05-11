@@ -92,13 +92,31 @@ public class NewsScanner {
         var text = "";
         var textBlocks = infoElement.getElementsByClass("text-block");
         if (textBlocks.size() != 0) { //TODO For example tournaments don't have a text field https://goodgame.ru/cup/9398/
-            text = textBlocks
+            var textTag = textBlocks
                 .get(0)
-                .getElementsByTag("p")
+                .getElementsByTag("p");
+            if (textTag.size() != 0) {
+                text = textTag
+                    .get(0)
+                    .text();
+            }
+            var listBlock = textBlocks
                 .get(0)
-                .text();
+                .getElementsByTag("ul");
+            if (listBlock.size() != 0) {
+                text += "\n\n" + getList(listBlock.get(0));
+            }
         }
         return text;
+    }
+
+    private String getList(Element listElement) {
+        var items = listElement.getElementsByTag("li");
+        var builder = new StringBuilder("");
+        for (var item: items) {
+            builder.append("• ").append(item.text()).append("\n");
+        }
+        return builder.toString();
     }
 
     private String getLink(Element infoElement) {

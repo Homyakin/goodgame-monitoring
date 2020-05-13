@@ -18,7 +18,6 @@ public class NewsMonitoring {
     private final NewsScanner newsScanner;
     private final Bot bot;
     private final String channel;
-    private String lastNewsLink = null;
     private Long lastNewsDate = null;
 
     public NewsMonitoring(NewsScanner newsScanner, Bot bot, BotConfiguration botConfiguration) {
@@ -30,26 +29,22 @@ public class NewsMonitoring {
     @Scheduled(fixedDelay = 60 * 1000)
     public void monitorNews() {
         var news = newsScanner.getLastNews();
-        if (lastNewsLink == null) {
+        if (lastNewsDate == null) {
             logger.info("Initialized monitoring");
-            lastNewsLink = news.get(0).getLink();
             lastNewsDate = news.get(0).getDate();
         }
 
         int lastIdx = 0;
-        while (lastIdx < news.size() && (!news.get(lastIdx).getLink().equals(lastNewsLink) ||
-                (lastNewsDate < news.get(lastIdx).getDate() && news.get(lastIdx).getLink().equals(lastNewsLink)))
-        ) {
+        while (lastIdx < news.size() && lastNewsDate < news.get(lastIdx).getDate()) {
             ++lastIdx;
         }
-        lastNewsLink = news.get(0).getLink();
-        lastNewsDate = news.get(0).getDate();
         if (lastIdx != 0) {
             logger.info("Got {} new news", lastIdx);
         }
         for (int i = lastIdx - 1; i >= 0; --i) {
             try {
                 bot.sendMessage(creteSendPhotoFromNews(news.get(i)));
+                lastNewsDate = news.get(i).getDate();
             } catch (IOException e) {
                 logger.error("Error during sending photo", e);
                 bot.sendMessage(createMessageFromNews(news.get(i)));

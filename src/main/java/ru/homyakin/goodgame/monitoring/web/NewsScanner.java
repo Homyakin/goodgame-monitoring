@@ -94,6 +94,9 @@ public class NewsScanner {
                 .get("style");
             link = link.substring(23, link.length() - 2);
         } else {
+            //jpg and png are usually cropped and there are no webp file by get method
+            link = link.replace(".jpg", ".webp");
+            link = link.replace(".png", ".webp");
             link = "https://static.goodgame.ru" + link;
         }
         return link;

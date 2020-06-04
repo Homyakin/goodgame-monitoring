@@ -113,19 +113,19 @@ public class NewsScanner {
         var text = "";
         var textBlocks = infoElement.getElementsByClass("text-block");
         if (textBlocks.size() != 0) {
-            var textTag = textBlocks
+            var textTags = textBlocks
                 .get(0)
                 .getElementsByTag("p");
-            if (textTag.size() != 0) {
-                text = textTag
-                    .get(0)
-                    .text();
+            var textBuilder = new StringBuilder("");
+            for (var textTag: textTags) {
+                textBuilder.append(textTag.text()).append("\n");
             }
+            text = textBuilder.toString();
             var listBlock = textBlocks
                 .get(0)
                 .getElementsByTag("ul");
             if (listBlock.size() != 0) {
-                text += "\n\n" + getList(listBlock.get(0));
+                text += "\n" + getList(listBlock.get(0));
             }
         } else {
             text = getTournamentInfo(infoElement);

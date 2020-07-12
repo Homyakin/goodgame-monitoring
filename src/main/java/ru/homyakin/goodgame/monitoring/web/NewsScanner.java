@@ -114,14 +114,19 @@ public class NewsScanner {
         var text = "";
         var textBlocks = infoElement.getElementsByClass("text-block");
         if (textBlocks.size() != 0) {
+            text += getUpdate(infoElement);
             var textTags = textBlocks
                 .get(0)
                 .getElementsByTag("p");
-            var textBuilder = new StringBuilder("");
-            for (var textTag : textTags) {
-                textBuilder.append(textTag.text()).append("\n");
+            var textBuilder = new StringBuilder();
+            int size = textTags.size();
+            for (int i = 0; i < size; ++i) {
+                textBuilder.append(textTags.get(i).text());
+                if (i != size - 1) {
+                    textBuilder.append("\n");
+                }
             }
-            text = textBuilder.toString();
+            text += textBuilder.toString();
             var listBlock = textBlocks
                 .get(0)
                 .getElementsByTag("ul");
@@ -132,6 +137,15 @@ public class NewsScanner {
             text = getTournamentInfo(infoElement);
         }
         return text;
+    }
+
+    private String getUpdate(Element infoElement) {
+        var blocks = infoElement.getElementsByClass("update-block");
+        if (blocks.size() != 0) {
+            return "Обновление: " + blocks.get(0).text() + "\n\n";
+        } else {
+            return "";
+        }
     }
 
     private String getList(Element listElement) {

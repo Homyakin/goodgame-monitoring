@@ -20,19 +20,16 @@ public class News {
         return imageLink;
     }
 
-    public String getInfo() {
-        return info;
-    }
-
-    public String getText() {
-        return text;
-    }
-
     public String getLink() {
         return link;
     }
 
     public Long getDate() {
         return date;
+    }
+
+    @Override
+    public String toString() {
+        return info + "\n\n" + text + "\n\n" + link;
     }
 }

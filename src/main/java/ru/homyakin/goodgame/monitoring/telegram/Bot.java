@@ -1,11 +1,15 @@
 package ru.homyakin.goodgame.monitoring.telegram;
 
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageCaption;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -37,20 +41,40 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
-    public void sendMessage(SendMessage message) {
+    public Optional<Message> sendMessage(SendMessage message) {
         try {
-            execute(message);
+            return Optional.of(execute(message));
         } catch (TelegramApiException e) {
             logger.error("Something went wrong during sending message", e);
         }
+        return Optional.empty();
     }
 
-    public void sendMessage(SendPhoto message) {
+    public Optional<Message> sendMessage(SendPhoto message) {
         try {
-            execute(message);
+            return Optional.of(execute(message));
         } catch (TelegramApiException e) {
-            logger.error("Something went wrong during sending message", e);
+            logger.error("Something went wrong during sending message with photo", e);
         }
+        return Optional.empty();
+    }
+
+    public Optional<Message> editMessage(EditMessageCaption message) {
+        try {
+            return Optional.of((Message) execute(message));
+        } catch (TelegramApiException e) {
+            logger.error("Something went wrong during editing message caption", e);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Message> editMessage(EditMessageText message) {
+        try {
+            return Optional.of((Message) execute(message));
+        } catch (TelegramApiException e) {
+            logger.error("Something went wrong during editing message text", e);
+        }
+        return Optional.empty();
     }
 
     @Override

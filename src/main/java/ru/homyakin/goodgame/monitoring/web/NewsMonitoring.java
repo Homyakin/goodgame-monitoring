@@ -2,12 +2,17 @@ package ru.homyakin.goodgame.monitoring.web;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageCaption;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import ru.homyakin.goodgame.monitoring.service.NewsStorage;
 import ru.homyakin.goodgame.monitoring.telegram.Bot;
 import ru.homyakin.goodgame.monitoring.telegram.BotConfiguration;
 import ru.homyakin.goodgame.monitoring.web.models.News;
@@ -18,12 +23,14 @@ public class NewsMonitoring {
     private final NewsScanner newsScanner;
     private final Bot bot;
     private final String channel;
+    private final NewsStorage storage;
     private Long lastNewsDate = null;
 
-    public NewsMonitoring(NewsScanner newsScanner, Bot bot, BotConfiguration botConfiguration) {
+    public NewsMonitoring(NewsScanner newsScanner, Bot bot, BotConfiguration botConfiguration, NewsStorage storage) {
         this.newsScanner = newsScanner;
         this.bot = bot;
         this.channel = botConfiguration.getChannel();
+        this.storage = storage;
     }
 
     @Scheduled(fixedDelay = 60 * 1000)
@@ -42,31 +49,55 @@ public class NewsMonitoring {
             logger.info("Got {} new news", lastIdx);
         }
         for (int i = lastIdx - 1; i >= 0; --i) {
+            Optional<Message> message;
             try {
-                bot.sendMessage(creteSendPhotoFromNews(news.get(i)));
-                lastNewsDate = news.get(i).getDate();
+                if ((message = storage.getNews(news.get(i).getLink())).isPresent()) {
+                    var m = message.get();
+                    if (m.getCaption() != null) {
+                        message = bot.editMessage(createEditMessageCaption(m, news.get(i)));
+                    } else {
+                        message = bot.editMessage(createEditMessageText(m, news.get(i)));
+                    }
+                } else {
+                    message = bot.sendMessage(creteSendPhotoFromNews(news.get(i)));
+                }
             } catch (IOException e) {
                 logger.error("Error during sending photo", e);
-                bot.sendMessage(createMessageFromNews(news.get(i)));
+                message = bot.sendMessage(createMessageFromNews(news.get(i)));
             }
+            if (message.isPresent()) {
+                storage.insertNews(news.get(i).getLink(), message.get());
+            }
+            lastNewsDate = news.get(i).getDate();
         }
+    }
+
+    private EditMessageCaption createEditMessageCaption(Message message, News news) {
+        return new EditMessageCaption()
+            .setChatId(channel)
+            .setMessageId(message.getMessageId())
+            .setCaption(news.toString());
+    }
+
+    private EditMessageText createEditMessageText(Message message, News news) {
+        return new EditMessageText()
+            .setChatId(channel)
+            .setMessageId(message.getMessageId())
+            .setText(news.toString())
+            .disableWebPagePreview();
     }
 
     private SendMessage createMessageFromNews(News news) {
         return new SendMessage()
             .setChatId(channel)
             .disableWebPagePreview()
-            .setText(generateTextFromNews(news));
+            .setText(news.toString());
     }
 
     private SendPhoto creteSendPhotoFromNews(News news) throws IOException {
         return new SendPhoto()
             .setPhoto(news.getLink(), new URL(news.getImageLink()).openStream())
             .setChatId(channel)
-            .setCaption(generateTextFromNews(news));
-    }
-
-    private String generateTextFromNews(News news) {
-        return news.getInfo() + "\n\n" + news.getText() + "\n\n" + news.getLink();
+            .setCaption(news.toString());
     }
 }

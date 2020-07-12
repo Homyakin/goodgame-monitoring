@@ -6,8 +6,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +14,7 @@ import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import ru.homyakin.goodgame.monitoring.utils.DateTimeUtils;
 import ru.homyakin.goodgame.monitoring.web.exceptions.RequestException;
 import ru.homyakin.goodgame.monitoring.web.models.News;
 
@@ -25,14 +24,16 @@ public class NewsScanner {
     private final HttpClient client;
     private final HttpRequest request;
     private final DateTimeFormatter formatter;
+    private final DateTimeUtils dateTimeUtils;
 
-    public NewsScanner() {
+    public NewsScanner(DateTimeUtils dateTimeUtils) {
         client = HttpClient.newHttpClient();
         request = HttpRequest.newBuilder()
             .uri(URI.create("https://goodgame.ru/news/"))
             .GET()
             .build();
         formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        this.dateTimeUtils = dateTimeUtils;
     }
 
     public List<News> getLastNews() {
@@ -117,7 +118,7 @@ public class NewsScanner {
                 .get(0)
                 .getElementsByTag("p");
             var textBuilder = new StringBuilder("");
-            for (var textTag: textTags) {
+            for (var textTag : textTags) {
                 textBuilder.append(textTag.text()).append("\n");
             }
             text = textBuilder.toString();
@@ -136,7 +137,7 @@ public class NewsScanner {
     private String getList(Element listElement) {
         var items = listElement.getElementsByTag("li");
         var builder = new StringBuilder("");
-        for (var item: items) {
+        for (var item : items) {
             builder.append("• ").append(item.text()).append("\n");
         }
         return builder.toString();
@@ -169,7 +170,7 @@ public class NewsScanner {
             int size = labels.size();
             for (int i = 0; i < size; ++i) {
                 if (names.get(i).getElementsByTag("gg-local-time").size() != 0) {
-                    var timestamp = Long.valueOf(
+                    var timestamp = Long.parseLong(
                         names
                             .get(i)
                             .getElementsByTag("gg-local-time")
@@ -177,7 +178,7 @@ public class NewsScanner {
                             .attributes()
                             .get("utc-timestamp")
                     );
-                    var dateTime = Instant.ofEpochSecond(timestamp).atZone(ZoneId.of("Europe/Moscow")).toLocalDateTime();
+                    var dateTime = dateTimeUtils.longToMoscowDateTime(timestamp);
                     tournamentText.append(labels.get(i).text()).append(": ").append(dateTime.format(formatter)).append("\n");
                 } else {
                     tournamentText.append(labels.get(i).text()).append(": ").append(names.get(i).text()).append("\n");

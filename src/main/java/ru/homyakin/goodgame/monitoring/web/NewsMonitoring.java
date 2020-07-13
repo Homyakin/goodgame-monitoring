@@ -65,7 +65,7 @@ public class NewsMonitoring {
                 logger.error("Error during sending photo", e);
                 message = bot.sendMessage(createMessageFromNews(news.get(i)));
             }
-            if (message.isPresent()) {
+            if (message.isPresent() && !news.get(i).isTournament()) {
                 storage.insertNews(news.get(i).getLink(), message.get());
             }
             lastNewsDate = news.get(i).getDate();

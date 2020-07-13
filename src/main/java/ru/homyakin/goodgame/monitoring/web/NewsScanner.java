@@ -64,11 +64,17 @@ public class NewsScanner {
     private News createNews(Element newsElement) {
         var imageLink = getImageLink(newsElement);
         var infoBlock = getInfoBlock(newsElement);
+        var tournament = isTournament(infoBlock);
         var info = getInfo(infoBlock);
-        var text = getText(infoBlock);
+        String text;
+        if (tournament) {
+            text = getTournamentInfo(infoBlock);
+        } else {
+            text = getText(infoBlock);
+        }
         var link = getLink(infoBlock);
         var date = getDate(infoBlock);
-        return new News(imageLink, info, text, link, date);
+        return new News(imageLink, info, text, link, date, tournament);
     }
 
     private Element getInfoBlock(Element newsElement) {
@@ -110,31 +116,31 @@ public class NewsScanner {
             .text();
     }
 
+    private boolean isTournament(Element infoElement) {
+        return infoElement.getElementsByClass("text-block").size() == 0;
+    }
+
     private String getText(Element infoElement) {
         var text = "";
         var textBlocks = infoElement.getElementsByClass("text-block");
-        if (textBlocks.size() != 0) {
-            text += getUpdate(infoElement);
-            var textTags = textBlocks
-                .get(0)
-                .getElementsByTag("p");
-            var textBuilder = new StringBuilder();
-            int size = textTags.size();
-            for (int i = 0; i < size; ++i) {
-                textBuilder.append(textTags.get(i).text());
-                if (i != size - 1) {
-                    textBuilder.append("\n");
-                }
+        text += getUpdate(infoElement);
+        var textTags = textBlocks
+            .get(0)
+            .getElementsByTag("p");
+        var textBuilder = new StringBuilder();
+        int size = textTags.size();
+        for (int i = 0; i < size; ++i) {
+            textBuilder.append(textTags.get(i).text());
+            if (i != size - 1) {
+                textBuilder.append("\n");
             }
-            text += textBuilder.toString();
-            var listBlock = textBlocks
-                .get(0)
-                .getElementsByTag("ul");
-            if (listBlock.size() != 0) {
-                text += "\n" + getList(listBlock.get(0));
-            }
-        } else {
-            text = getTournamentInfo(infoElement);
+        }
+        text += textBuilder.toString();
+        var listBlock = textBlocks
+            .get(0)
+            .getElementsByTag("ul");
+        if (listBlock.size() != 0) {
+            text += "\n" + getList(listBlock.get(0));
         }
         return text;
     }

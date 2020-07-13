@@ -6,14 +6,16 @@ public class News {
     private final String info;
     private final String text;
     private final Long date;
+    private final boolean tournament;
 
 
-    public News(String imageLink, String info, String text, String link, Long date) {
+    public News(String imageLink, String info, String text, String link, Long date, boolean tournament) {
         this.imageLink = imageLink;
         this.info = info;
         this.text = text;
         this.link = link;
         this.date = date;
+        this.tournament = tournament;
     }
 
     public String getImageLink() {
@@ -26,6 +28,10 @@ public class News {
 
     public Long getDate() {
         return date;
+    }
+
+    public boolean isTournament() {
+        return tournament;
     }
 
     @Override

@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageCaption;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.homyakin.goodgame.monitoring.service.NewsStorage;
 import ru.homyakin.goodgame.monitoring.telegram.Bot;
@@ -73,31 +74,38 @@ public class NewsMonitoring {
     }
 
     private EditMessageCaption createEditMessageCaption(Message message, News news) {
-        return new EditMessageCaption()
-            .setChatId(channel)
-            .setMessageId(message.getMessageId())
-            .setCaption(news.toString());
+        return EditMessageCaption
+            .builder()
+            .chatId(channel)
+            .messageId(message.getMessageId())
+            .caption(news.toString())
+            .build();
     }
 
     private EditMessageText createEditMessageText(Message message, News news) {
-        return new EditMessageText()
-            .setChatId(channel)
-            .setMessageId(message.getMessageId())
-            .setText(news.toString())
-            .disableWebPagePreview();
+        return EditMessageText
+            .builder()
+            .chatId(channel)
+            .messageId(message.getMessageId())
+            .text(news.toString())
+            .disableWebPagePreview(true)
+            .build();
     }
 
     private SendMessage createMessageFromNews(News news) {
-        return new SendMessage()
-            .setChatId(channel)
-            .disableWebPagePreview()
-            .setText(news.toString());
+        return SendMessage.builder()
+            .chatId(channel)
+            .disableWebPagePreview(true)
+            .text(news.toString())
+            .build();
     }
 
     private SendPhoto creteSendPhotoFromNews(News news) throws IOException {
-        return new SendPhoto()
-            .setPhoto(news.getLink(), new URL(news.getImageLink()).openStream())
-            .setChatId(channel)
-            .setCaption(news.toString());
+        return SendPhoto
+            .builder()
+            .photo(new InputFile(new URL(news.getImageLink()).openStream(), news.getLink()))
+            .chatId(channel)
+            .caption(news.toString())
+            .build();
     }
 }

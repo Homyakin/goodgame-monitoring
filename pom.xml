@@ -6,7 +6,7 @@
 
     <groupId>ru.homyakin</groupId>
     <artifactId>goodgame-monitoring</artifactId>
-    <version>0.5</version>
+    <version>0.5.1</version>
 
     <properties>
         <java.version>14</java.version>
@@ -37,7 +37,7 @@
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots</artifactId>
-            <version>4.9</version>
+            <version>5.1.0</version>
         </dependency>
     </dependencies>
 

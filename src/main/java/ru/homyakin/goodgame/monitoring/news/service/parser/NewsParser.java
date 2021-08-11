@@ -1,56 +1,26 @@
-package ru.homyakin.goodgame.monitoring.web;
+package ru.homyakin.goodgame.monitoring.news.service.parser;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import ru.homyakin.goodgame.monitoring.news.models.News;
 import ru.homyakin.goodgame.monitoring.utils.DateTimeUtils;
-import ru.homyakin.goodgame.monitoring.web.exceptions.RequestException;
-import ru.homyakin.goodgame.monitoring.web.models.News;
 
 @Component
-public class NewsScanner {
-    private final static Logger logger = LoggerFactory.getLogger(NewsScanner.class);
-    private final HttpClient client;
-    private final HttpRequest request;
-    private final DateTimeFormatter formatter;
-    private final DateTimeUtils dateTimeUtils;
+public class NewsParser {
 
-    public NewsScanner(DateTimeUtils dateTimeUtils) {
-        client = HttpClient.newHttpClient();
-        request = HttpRequest.newBuilder()
-            .uri(URI.create("https://goodgame.ru/news/"))
-            .GET()
-            .build();
-        formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        this.dateTimeUtils = dateTimeUtils;
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+
+    private final ImageParser imageParser;
+
+    public NewsParser(ImageParser imageParser) {
+        this.imageParser = imageParser;
     }
 
-    public List<News> getLastNews() {
-        try {
-            var response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != HttpURLConnection.HTTP_OK) {
-                logger.error("Http code is not ok: {}", response.statusCode());
-                throw new IllegalStateException("Http code is not ok.");
-            }
-            return parseContent(response.body());
-        } catch (InterruptedException | IOException e) {
-            logger.error("Something went wrong during request", e);
-            throw new RequestException("Something went wrong during request", e);
-        }
-    }
-
-    private List<News> parseContent(String html) {
+    public List<News> parseContent(String html) {
         var doc = Jsoup.parse(html);
         var elements = doc.getElementsByClass("news-element");
         List<News> news = new ArrayList<>();
@@ -62,7 +32,7 @@ public class NewsScanner {
     }
 
     private News createNews(Element newsElement) {
-        var imageLink = getImageLink(newsElement);
+        var imageLink = imageParser.getImageLink(newsElement);
         var infoBlock = getInfoBlock(newsElement);
         var tournament = isTournament(infoBlock);
         var info = getInfo(infoBlock);
@@ -81,32 +51,6 @@ public class NewsScanner {
         return newsElement
             .getElementsByClass("info-block")
             .get(0);
-    }
-
-    private String getImageLink(Element newsElement) {
-        var link = newsElement
-            .getElementsByClass("img-block")
-            .get(0)
-            .getElementsByTag("a")
-            .get(0)
-            .attributes()
-            .get("gg-webp");
-        if (link.equals("")) { //tournaments
-            link = newsElement
-                .getElementsByClass("img-block")
-                .get(0)
-                .getElementsByTag("a")
-                .get(0)
-                .attributes()
-                .get("style");
-            link = link.substring(23, link.length() - 2);
-        } else {
-            //jpg and png are usually cropped and there are no webp file by get method
-            link = link.replace(".jpg", ".webp");
-            link = link.replace(".png", ".webp");
-            link = "https://static.goodgame.ru" + link;
-        }
-        return link;
     }
 
     private String getInfo(Element infoElement) {
@@ -198,7 +142,7 @@ public class NewsScanner {
                             .attributes()
                             .get("utc-timestamp")
                     );
-                    var dateTime = dateTimeUtils.longToMoscowDateTime(timestamp);
+                    var dateTime = DateTimeUtils.longToMoscowDateTime(timestamp);
                     tournamentText.append(labels.get(i).text()).append(": ").append(dateTime.format(formatter)).append("\n");
                 } else {
                     tournamentText.append(labels.get(i).text()).append(": ").append(names.get(i).text()).append("\n");

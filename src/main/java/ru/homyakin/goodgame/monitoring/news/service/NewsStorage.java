@@ -1,4 +1,4 @@
-package ru.homyakin.goodgame.monitoring.service;
+package ru.homyakin.goodgame.monitoring.news.service;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -13,11 +13,6 @@ import ru.homyakin.goodgame.monitoring.utils.DateTimeUtils;
 @Service
 public class NewsStorage {
     private final Map<String, Message> lastNews = new HashMap<>();
-    private final DateTimeUtils dateTimeUtils;
-
-    public NewsStorage(DateTimeUtils dateTimeUtils) {
-        this.dateTimeUtils = dateTimeUtils;
-    }
 
     public Optional<Message> getNews(String url) {
         return Optional.ofNullable(lastNews.get(url));
@@ -33,8 +28,8 @@ public class NewsStorage {
         for (var news : lastNews.entrySet()) {
             if (
                 Duration.between(
-                    dateTimeUtils.longToMoscowDateTime(news.getValue().getDate()),
-                    dateTimeUtils.moscowTime()
+                    DateTimeUtils.longToMoscowDateTime(news.getValue().getDate()),
+                    DateTimeUtils.moscowTime()
                 ).toHours() > 48
             ) {
                 oldNews.add(news.getKey());

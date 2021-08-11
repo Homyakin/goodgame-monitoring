@@ -1,4 +1,4 @@
-package ru.homyakin.goodgame.monitoring.web.models;
+package ru.homyakin.goodgame.monitoring.news.models;
 
 public class News {
     private final String link;

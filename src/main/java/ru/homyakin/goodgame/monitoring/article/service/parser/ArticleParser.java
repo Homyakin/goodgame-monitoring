@@ -1,23 +1,20 @@
 package ru.homyakin.goodgame.monitoring.article.service.parser;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Component;
 import ru.homyakin.goodgame.monitoring.article.models.Article;
-import ru.homyakin.goodgame.monitoring.utils.DateTimeUtils;
 
 @Component
 public class ArticleParser {
-
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-
     private final ImageLinkParser imageLinkParser;
+    private final TournamentParser tournamentParser;
 
-    public ArticleParser(ImageLinkParser imageLinkParser) {
+    public ArticleParser(ImageLinkParser imageLinkParser, TournamentParser tournamentParser) {
         this.imageLinkParser = imageLinkParser;
+        this.tournamentParser = tournamentParser;
     }
 
     public List<Article> parseContent(String html) {
@@ -38,7 +35,7 @@ public class ArticleParser {
         var info = getInfo(infoBlock);
         String text;
         if (tournament) {
-            text = getTournamentInfo(infoBlock);
+            text = tournamentParser.getTournamentInfo(infoBlock);
         } else {
             text = getText(infoBlock);
         }
@@ -113,43 +110,6 @@ public class ArticleParser {
             .get(0)
             .attributes()
             .get("href");
-    }
-
-    private String getTournamentInfo(Element infoElement) {
-        var builder = new StringBuilder("");
-        var update = infoElement.getElementsByClass("update-block");
-        var updateText = "";
-        if (update.size() != 0) {
-            updateText = update
-                .get(0)
-                .getElementsByTag("p")
-                .get(0)
-                .text() + "\n\n";
-        }
-        var tournament = infoElement.getElementsByClass("tournaments-wrap");
-        var tournamentText = new StringBuilder("");
-        if (tournament.size() != 0) {
-            var labels = tournament.get(0).getElementsByClass("label");
-            var names = tournament.get(0).getElementsByClass("name");
-            int size = labels.size();
-            for (int i = 0; i < size; ++i) {
-                if (names.get(i).getElementsByTag("gg-local-time").size() != 0) {
-                    var timestamp = Long.parseLong(
-                        names
-                            .get(i)
-                            .getElementsByTag("gg-local-time")
-                            .get(0)
-                            .attributes()
-                            .get("utc-timestamp")
-                    );
-                    var dateTime = DateTimeUtils.longToMoscowDateTime(timestamp);
-                    tournamentText.append(labels.get(i).text()).append(": ").append(dateTime.format(formatter)).append("\n");
-                } else {
-                    tournamentText.append(labels.get(i).text()).append(": ").append(names.get(i).text()).append("\n");
-                }
-            }
-        }
-        return builder.append(updateText).append(tournamentText).toString();
     }
 
     private Long getDate(Element infoElement) {

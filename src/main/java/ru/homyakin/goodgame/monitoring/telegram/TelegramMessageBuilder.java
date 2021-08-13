@@ -9,44 +9,44 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageCa
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import ru.homyakin.goodgame.monitoring.news.models.News;
+import ru.homyakin.goodgame.monitoring.article.models.Article;
 
 @Component
 public class TelegramMessageBuilder {
 
-    public static EditMessageCaption createEditMessageCaption(Message message, News news) {
+    public static EditMessageCaption createEditMessageCaption(Message message, Article article) {
         return EditMessageCaption
             .builder()
             .chatId(message.getChatId().toString())
             .messageId(message.getMessageId())
-            .caption(news.toString())
+            .caption(article.toString())
             .build();
     }
 
-    public static EditMessageText createEditMessageText(Message message, News news) {
+    public static EditMessageText createEditMessageText(Message message, Article article) {
         return EditMessageText
             .builder()
             .chatId(message.getChatId().toString())
             .messageId(message.getMessageId())
-            .text(news.toString())
+            .text(article.toString())
             .disableWebPagePreview(true)
             .build();
     }
 
-    public static SendMessage createMessageFromNews(News news, String chatId) {
+    public static SendMessage createMessageFromNews(Article article, String chatId) {
         return SendMessage.builder()
             .chatId(chatId)
             .disableWebPagePreview(true)
-            .text(news.toString())
+            .text(article.toString())
             .build();
     }
 
-    public static SendPhoto creteSendPhotoFromNews(News news, String chatId) throws IOException {
+    public static SendPhoto creteSendPhotoFromNews(Article article, String chatId) throws IOException {
         return SendPhoto
             .builder()
-            .photo(new InputFile(new URL(news.getImageLink()).openStream(), news.getLink()))
+            .photo(new InputFile(new URL(article.getImageLink()).openStream(), article.getLink()))
             .chatId(chatId)
-            .caption(news.toString())
+            .caption(article.toString())
             .build();
     }
 }

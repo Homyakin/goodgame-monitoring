@@ -1,6 +1,6 @@
-package ru.homyakin.goodgame.monitoring.news.models;
+package ru.homyakin.goodgame.monitoring.article.models;
 
-public class News {
+public class Article {
     private final String link;
     private final String imageLink;
     private final String info;
@@ -9,7 +9,7 @@ public class News {
     private final boolean tournament;
 
 
-    public News(String imageLink, String info, String text, String link, Long date, boolean tournament) {
+    public Article(String imageLink, String info, String text, String link, Long date, boolean tournament) {
         this.imageLink = imageLink;
         this.info = info;
         this.text = text;

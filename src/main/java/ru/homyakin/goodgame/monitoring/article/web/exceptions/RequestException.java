@@ -1,4 +1,4 @@
-package ru.homyakin.goodgame.monitoring.news.web.exceptions;
+package ru.homyakin.goodgame.monitoring.article.web.exceptions;
 
 public class RequestException extends RuntimeException {
 

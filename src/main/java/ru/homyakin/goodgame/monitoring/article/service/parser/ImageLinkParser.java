@@ -1,12 +1,12 @@
-package ru.homyakin.goodgame.monitoring.news.service.parser;
+package ru.homyakin.goodgame.monitoring.article.service.parser;
 
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ImageParser {
-    public String getImageLink(Element newsElement) {
-        var link = newsElement
+public class ImageLinkParser {
+    public String getImageLink(Element articleElement) {
+        var link = articleElement
             .getElementsByClass("img-block")
             .get(0)
             .getElementsByTag("a")
@@ -14,7 +14,7 @@ public class ImageParser {
             .attributes()
             .get("gg-webp");
         if (link.equals("")) {
-            link = getTournamentImageLink(newsElement);
+            link = getTournamentImageLink(articleElement);
         } else {
             // jpg и png обычно обрезаны, поэтому нужно использовать одноименный .webp файл
             link = link.replace(".jpg", ".webp");
@@ -24,9 +24,9 @@ public class ImageParser {
         return link;
     }
 
-    private String getTournamentImageLink(Element newsElement) {
+    private String getTournamentImageLink(Element articleElement) {
         // В обычных новостях здесь лежит заглушка
-        var link = newsElement
+        var link = articleElement
             .getElementsByClass("img-block")
             .get(0)
             .getElementsByTag("a")

@@ -1,4 +1,4 @@
-package ru.homyakin.goodgame.monitoring.news.web;
+package ru.homyakin.goodgame.monitoring.article.web;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -9,15 +9,15 @@ import java.net.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import ru.homyakin.goodgame.monitoring.news.web.exceptions.RequestException;
+import ru.homyakin.goodgame.monitoring.article.web.exceptions.RequestException;
 
 @Component
-public class NewsScanner {
-    private final static Logger logger = LoggerFactory.getLogger(NewsScanner.class);
+public class ArticleScanner {
+    private final static Logger logger = LoggerFactory.getLogger(ArticleScanner.class);
     private final HttpClient client;
     private final HttpRequest request;
 
-    public NewsScanner() {
+    public ArticleScanner() {
         client = HttpClient.newHttpClient();
         request = HttpRequest.newBuilder()
             .uri(URI.create("https://goodgame.ru/news/"))
@@ -25,7 +25,7 @@ public class NewsScanner {
             .build();
     }
 
-    public HttpResponse<String> getLastNews() {
+    public HttpResponse<String> getLastArticles() {
         try {
             var response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != HttpURLConnection.HTTP_OK) {

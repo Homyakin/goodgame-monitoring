@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import ru.homyakin.goodgame.monitoring.news.models.News;
+import ru.homyakin.goodgame.monitoring.article.models.Article;
 
 @Component
 public class ChannelController {
@@ -20,24 +20,24 @@ public class ChannelController {
         this.channel = botConfiguration.getChannel();
     }
 
-    public Optional<Message> sendNews(News news, @Nullable Message message) {
+    public Optional<Message> sendArticle(Article article, @Nullable Message message) {
         try {
             if (message != null) {
-                return updateMessage(news, message);
+                return updateMessage(article, message);
             } else {
-                return bot.sendMessage(TelegramMessageBuilder.creteSendPhotoFromNews(news, channel));
+                return bot.sendMessage(TelegramMessageBuilder.creteSendPhotoFromNews(article, channel));
             }
         } catch (IOException e) {
             logger.error("Error during sending photo", e);
-            return bot.sendMessage(TelegramMessageBuilder.createMessageFromNews(news, channel));
+            return bot.sendMessage(TelegramMessageBuilder.createMessageFromNews(article, channel));
         }
     }
 
-    private Optional<Message> updateMessage(News news, Message message) {
+    private Optional<Message> updateMessage(Article article, Message message) {
         if (message.getCaption() != null) {
-            return bot.editMessage(TelegramMessageBuilder.createEditMessageCaption(message, news));
+            return bot.editMessage(TelegramMessageBuilder.createEditMessageCaption(message, article));
         } else {
-            return bot.editMessage(TelegramMessageBuilder.createEditMessageText(message, news));
+            return bot.editMessage(TelegramMessageBuilder.createEditMessageText(message, article));
         }
     }
 }

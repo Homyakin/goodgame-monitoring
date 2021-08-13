@@ -1,4 +1,4 @@
-package ru.homyakin.goodgame.monitoring.news.service.parser;
+package ru.homyakin.goodgame.monitoring.article.service.parser;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -6,34 +6,34 @@ import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Component;
-import ru.homyakin.goodgame.monitoring.news.models.News;
+import ru.homyakin.goodgame.monitoring.article.models.Article;
 import ru.homyakin.goodgame.monitoring.utils.DateTimeUtils;
 
 @Component
-public class NewsParser {
+public class ArticleParser {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
-    private final ImageParser imageParser;
+    private final ImageLinkParser imageLinkParser;
 
-    public NewsParser(ImageParser imageParser) {
-        this.imageParser = imageParser;
+    public ArticleParser(ImageLinkParser imageLinkParser) {
+        this.imageLinkParser = imageLinkParser;
     }
 
-    public List<News> parseContent(String html) {
+    public List<Article> parseContent(String html) {
         var doc = Jsoup.parse(html);
         var elements = doc.getElementsByClass("news-element");
-        List<News> news = new ArrayList<>();
+        List<Article> articles = new ArrayList<>();
         for (var element : elements) {
-            news.add(createNews(element));
+            articles.add(createArticle(element));
         }
-        news.sort((n1, n2) -> n2.getDate().compareTo(n1.getDate()));
-        return news;
+        articles.sort((n1, n2) -> n2.getDate().compareTo(n1.getDate()));
+        return articles;
     }
 
-    private News createNews(Element newsElement) {
-        var imageLink = imageParser.getImageLink(newsElement);
-        var infoBlock = getInfoBlock(newsElement);
+    private Article createArticle(Element articleElement) {
+        var imageLink = imageLinkParser.getImageLink(articleElement);
+        var infoBlock = getInfoBlock(articleElement);
         var tournament = isTournament(infoBlock);
         var info = getInfo(infoBlock);
         String text;
@@ -44,11 +44,11 @@ public class NewsParser {
         }
         var link = getLink(infoBlock);
         var date = getDate(infoBlock);
-        return new News(imageLink, info, text, link, date, tournament);
+        return new Article(imageLink, info, text, link, date, tournament);
     }
 
-    private Element getInfoBlock(Element newsElement) {
-        return newsElement
+    private Element getInfoBlock(Element articleElement) {
+        return articleElement
             .getElementsByClass("info-block")
             .get(0);
     }

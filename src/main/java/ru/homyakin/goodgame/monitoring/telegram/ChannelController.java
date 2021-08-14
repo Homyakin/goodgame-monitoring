@@ -2,9 +2,9 @@ package ru.homyakin.goodgame.monitoring.telegram;
 
 import java.io.IOException;
 import java.util.Optional;
+import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.homyakin.goodgame.monitoring.article.models.Article;
@@ -34,6 +34,11 @@ public class ChannelController {
     }
 
     private Optional<Message> updateMessage(Article article, Message message) {
+        if (message.getCaption().equals(article.toString())) {
+            logger.info("Article {} is not required to be updated", article.getLink());
+            return Optional.of(message);
+        }
+        logger.info("Updating {} for new text: {}", article.getLink(), article.toString());
         if (message.getCaption() != null) {
             return bot.editMessage(TelegramMessageBuilder.createEditMessageCaption(message, article));
         } else {

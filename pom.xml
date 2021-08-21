@@ -9,8 +9,8 @@
     <version>0.5.1</version>
 
     <properties>
-        <java.version>14</java.version>
-        <spring.version>2.2.6.RELEASE</spring.version>
+        <java.version>16</java.version>
+        <spring.version>2.5.4</spring.version>
         <start-class>ru.homyakin.goodgame.monitoring.Application</start-class>
     </properties>
 
@@ -67,6 +67,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring.version}</version>
                 <executions>
                     <execution>
                         <goals>

@@ -1,5 +1,5 @@
-mvn package spring-boot:repackage &&
-docker build -f Dockerfile -t goodgame-bot-img . &&
-docker stop goodgame-bot || true &&
-docker rm goodgame-bot || true &&
-docker run --name goodgame-bot -d goodgame-bot-img
+mvn package spring-boot:repackage
+sudo docker build -f Dockerfile -t goodgame-bot-img .
+sudo docker stop goodgame-bot
+sudo docker rm goodgame-bot
+sudo docker run --name goodgame-bot -d goodgame-bot-img

@@ -42,6 +42,14 @@ public class TelegramMessageBuilder {
             .build();
     }
 
+    public static SendMessage createSendMessage(@NotNull String text, @NotNull String chatId) {
+        return SendMessage.builder()
+            .chatId(chatId)
+            .disableWebPagePreview(true)
+            .text(text)
+            .build();
+    }
+
     public static SendPhoto creteSendPhotoFromNews(@NotNull Article article, @NotNull String chatId) throws IOException {
         return SendPhoto
             .builder()

@@ -35,11 +35,7 @@ public class Bot extends TelegramLongPollingBot {
         if (update.hasMessage()) {
             if (update.getMessage().isUserMessage()) {
                 if (update.getMessage().getChatId().equals(adminId)) {
-                    var message = SendMessage
-                        .builder()
-                        .chatId(adminId.toString())
-                        .text("OK")
-                        .build();
+                    var message = TelegramMessageBuilder.createSendMessage("OK", adminId.toString());
                     sendMessage(message);
                 }
             }

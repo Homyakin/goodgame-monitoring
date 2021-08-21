@@ -10,16 +10,23 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.homyakin.goodgame.monitoring.article.models.Article;
 import ru.homyakin.goodgame.monitoring.models.EitherError;
+import ru.homyakin.goodgame.monitoring.utils.CommonUtils;
 
 @Component
 public class ChannelController {
     private static final Logger logger = LoggerFactory.getLogger(ChannelController.class);
     private final Bot bot;
     private final String channel;
+    private final UserController userController;
 
-    public ChannelController(Bot bot, BotConfiguration botConfiguration) {
+    public ChannelController(
+        Bot bot,
+        BotConfiguration botConfiguration,
+        UserController userController
+    ) {
         this.bot = bot;
         this.channel = botConfiguration.getChannel();
+        this.userController = userController;
     }
 
     public Either<EitherError, Message> sendArticle(@NotNull Article article, @Nullable Message message) {
@@ -31,6 +38,7 @@ public class ChannelController {
             }
         } catch (IOException e) {
             logger.error("Error during sending photo", e);
+            userController.notifyAdmin("Error during sending photo\n" + CommonUtils.getStringStackTrace(e));
             return bot.sendMessage(TelegramMessageBuilder.createSendMessageFromNews(article, channel));
         }
     }

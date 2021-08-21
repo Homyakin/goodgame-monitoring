@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.homyakin.goodgame.monitoring.article.service.parser.ArticleParser;
 import ru.homyakin.goodgame.monitoring.article.web.ArticleScanner;
 import ru.homyakin.goodgame.monitoring.telegram.ChannelController;
+import ru.homyakin.goodgame.monitoring.telegram.UserController;
 
 @Service
 public class ArticleMonitoring {
@@ -15,18 +16,21 @@ public class ArticleMonitoring {
     private final ArticleStorage storage;
     private final ArticleParser articleParser;
     private final ChannelController channelController;
+    private final UserController userController;
     private Long lastArticleDate = null;
 
     public ArticleMonitoring(
         ArticleScanner articleScanner,
         ArticleStorage storage,
         ArticleParser articleParser,
-        ChannelController channelController
+        ChannelController channelController,
+        UserController userController
     ) {
         this.articleScanner = articleScanner;
         this.storage = storage;
         this.articleParser = articleParser;
         this.channelController = channelController;
+        this.userController = userController;
     }
 
     @Scheduled(fixedDelay = 60 * 1000)
@@ -57,7 +61,7 @@ public class ArticleMonitoring {
                 }
             }).peekLeft(error -> {
                 logger.error("Something wrong with {}", article.getLink());
-                // TODO отправить сообщение админу
+                userController.notifyAdmin(error.getMessage());
             });
             lastArticleDate = article.getDate();
         }

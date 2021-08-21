@@ -1,13 +1,15 @@
 package ru.homyakin.goodgame.monitoring.telegram;
 
+import io.vavr.control.Either;
 import java.io.IOException;
-import java.util.Optional;
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.homyakin.goodgame.monitoring.article.models.Article;
+import ru.homyakin.goodgame.monitoring.models.EitherError;
 
 @Component
 public class ChannelController {
@@ -20,7 +22,7 @@ public class ChannelController {
         this.channel = botConfiguration.getChannel();
     }
 
-    public Optional<Message> sendArticle(Article article, @Nullable Message message) {
+    public Either<EitherError, Message> sendArticle(@NotNull Article article, @Nullable Message message) {
         try {
             if (message != null) {
                 return updateMessage(article, message);
@@ -29,14 +31,14 @@ public class ChannelController {
             }
         } catch (IOException e) {
             logger.error("Error during sending photo", e);
-            return bot.sendMessage(TelegramMessageBuilder.createMessageFromNews(article, channel));
+            return bot.sendMessage(TelegramMessageBuilder.createSendMessageFromNews(article, channel));
         }
     }
 
-    private Optional<Message> updateMessage(Article article, Message message) {
-        if (message.getCaption().equals(article.toString())) {
+    private Either<EitherError, Message> updateMessage(@NotNull Article article, @NotNull Message message) {
+        if (article.toString().equals(message.getCaption())) {
             logger.info("Article {} is not required to be updated", article.getLink());
-            return Optional.of(message);
+            return Either.right(message);
         }
         logger.info("Updating {} for new text: {}", article.getLink(), article.toString());
         if (message.getCaption() != null) {

@@ -39,6 +39,12 @@
             <artifactId>telegrambots</artifactId>
             <version>5.3.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.vavr/vavr -->
+        <dependency>
+            <groupId>io.vavr</groupId>
+            <artifactId>vavr</artifactId>
+            <version>0.10.4</version>
+        </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>

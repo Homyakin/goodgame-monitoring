@@ -2,6 +2,7 @@ package ru.homyakin.goodgame.monitoring.telegram;
 
 import java.io.IOException;
 import java.net.URL;
+import javax.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -14,7 +15,7 @@ import ru.homyakin.goodgame.monitoring.article.models.Article;
 @Component
 public class TelegramMessageBuilder {
 
-    public static EditMessageCaption createEditMessageCaption(Message message, Article article) {
+    public static EditMessageCaption createEditMessageCaption(@NotNull Message message, @NotNull Article article) {
         return EditMessageCaption
             .builder()
             .chatId(message.getChatId().toString())
@@ -23,7 +24,7 @@ public class TelegramMessageBuilder {
             .build();
     }
 
-    public static EditMessageText createEditMessageText(Message message, Article article) {
+    public static EditMessageText createEditMessageText(@NotNull Message message, @NotNull Article article) {
         return EditMessageText
             .builder()
             .chatId(message.getChatId().toString())
@@ -33,7 +34,7 @@ public class TelegramMessageBuilder {
             .build();
     }
 
-    public static SendMessage createMessageFromNews(Article article, String chatId) {
+    public static SendMessage createSendMessageFromNews(@NotNull Article article, @NotNull String chatId) {
         return SendMessage.builder()
             .chatId(chatId)
             .disableWebPagePreview(true)
@@ -41,7 +42,7 @@ public class TelegramMessageBuilder {
             .build();
     }
 
-    public static SendPhoto creteSendPhotoFromNews(Article article, String chatId) throws IOException {
+    public static SendPhoto creteSendPhotoFromNews(@NotNull Article article, @NotNull String chatId) throws IOException {
         return SendPhoto
             .builder()
             .photo(new InputFile(new URL(article.getImageLink()).openStream(), article.getLink()))

@@ -47,16 +47,18 @@ public class ArticleMonitoring {
         }
         for (int i = lastIdx - 1; i >= 0; --i) {
             var article = articles.get(i);
-            var message = channelController.sendArticle(
+            var result = channelController.sendArticle(
                 article,
                 storage.getArticle(article.getLink()).orElse(null)
             );
-            if (message.isPresent() && !article.isTournament()) {
-                storage.insertArticle(article.getLink(), message.get());
-            } else if (message.isEmpty()) {
-                // TODO отправить сообщение админу
+            result.peek(message -> {
+                if (!article.isTournament()) {
+                    storage.insertArticle(article.getLink(), message);
+                }
+            }).peekLeft(error -> {
                 logger.error("Something wrong with {}", article.getLink());
-            }
+                // TODO отправить сообщение админу
+            });
             lastArticleDate = article.getDate();
         }
     }

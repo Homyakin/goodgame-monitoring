@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageCaption;
@@ -36,13 +37,13 @@ public class Bot extends TelegramLongPollingBot {
             if (update.getMessage().isUserMessage()) {
                 if (update.getMessage().getChatId().equals(adminId)) {
                     var message = TelegramMessageBuilder.createSendMessage("OK", adminId.toString());
-                    sendMessage(message);
+                    send(message);
                 }
             }
         }
     }
 
-    public Either<EitherError, Message> sendMessage(SendMessage message) {
+    public Either<EitherError, Message> send(SendMessage message) {
         try {
             return Either.right(execute(message));
         } catch (TelegramApiException e) {
@@ -51,7 +52,7 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
-    public Either<EitherError, Message> sendMessage(SendPhoto message) {
+    public Either<EitherError, Message> send(SendPhoto message) {
         try {
             return Either.right(execute(message));
         } catch (TelegramApiException e) {
@@ -60,7 +61,16 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
-    public Either<EitherError, Message> editMessage(EditMessageCaption message) {
+    public Either<EitherError, Message> send(SendAnimation message) {
+        try {
+            return Either.right(execute(message));
+        } catch (TelegramApiException e) {
+            logger.error("Something went wrong during sending message with animation", e);
+            return Either.left(new TelegramError("Unable to send message with animation\n" + CommonUtils.getStringStackTrace(e)));
+        }
+    }
+
+    public Either<EitherError, Message> edit(EditMessageCaption message) {
         try {
             return Either.right((Message) execute(message));
         } catch (TelegramApiException e) {
@@ -69,7 +79,7 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
-    public Either<EitherError, Message> editMessage(EditMessageText message) {
+    public Either<EitherError, Message> edit(EditMessageText message) {
         try {
             return Either.right((Message) execute(message));
         } catch (TelegramApiException e) {

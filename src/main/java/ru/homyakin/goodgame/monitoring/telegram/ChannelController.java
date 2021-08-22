@@ -34,12 +34,15 @@ public class ChannelController {
             if (message != null) {
                 return updateMessage(article, message);
             } else {
-                return bot.sendMessage(TelegramMessageBuilder.creteSendPhotoFromNews(article, channel));
+                return switch (article.getMediaType()) {
+                    case IMAGE -> bot.send(TelegramMessageBuilder.creteSendPhotoFromArticle(article, channel));
+                    case GIF -> bot.send(TelegramMessageBuilder.createSendAnimationFromArticle(article, channel));
+                };
             }
         } catch (IOException e) {
             logger.error("Error during sending photo", e);
             userController.notifyAdmin("Error during sending photo\n" + CommonUtils.getStringStackTrace(e));
-            return bot.sendMessage(TelegramMessageBuilder.createSendMessageFromNews(article, channel));
+            return bot.send(TelegramMessageBuilder.createSendMessageFromArticle(article, channel));
         }
     }
 
@@ -50,9 +53,9 @@ public class ChannelController {
         }
         logger.info("Updating {} for new text: {}", article.link(), article.toString());
         if (message.getCaption() != null) {
-            return bot.editMessage(TelegramMessageBuilder.createEditMessageCaption(message, article));
+            return bot.edit(TelegramMessageBuilder.createEditMessageCaptionFromArticle(message, article));
         } else {
-            return bot.editMessage(TelegramMessageBuilder.createEditMessageText(message, article));
+            return bot.edit(TelegramMessageBuilder.createEditMessageTextFromArticle(message, article));
         }
     }
 }

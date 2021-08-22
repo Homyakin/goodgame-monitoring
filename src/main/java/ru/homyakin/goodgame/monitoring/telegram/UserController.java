@@ -14,6 +14,6 @@ public class UserController {
     }
 
     public void notifyAdmin(@NotNull String text) {
-        bot.sendMessage(TelegramMessageBuilder.createSendMessage(text, adminId.toString()));
+        bot.send(TelegramMessageBuilder.createSendMessage(text, adminId.toString()));
     }
 }

@@ -53,7 +53,7 @@ public class TelegramMessageBuilder {
     public static SendPhoto creteSendPhotoFromNews(@NotNull Article article, @NotNull String chatId) throws IOException {
         return SendPhoto
             .builder()
-            .photo(new InputFile(new URL(article.getImageLink()).openStream(), article.getLink()))
+            .photo(new InputFile(new URL(article.imageLink()).openStream(), article.link()))
             .chatId(chatId)
             .caption(article.toString())
             .build();

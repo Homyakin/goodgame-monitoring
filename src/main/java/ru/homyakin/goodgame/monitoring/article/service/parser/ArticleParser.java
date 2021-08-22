@@ -24,7 +24,7 @@ public class ArticleParser {
         for (var element : elements) {
             articles.add(createArticle(element));
         }
-        articles.sort((n1, n2) -> n2.getDate().compareTo(n1.getDate()));
+        articles.sort((n1, n2) -> n2.date().compareTo(n1.date()));
         return articles;
     }
 

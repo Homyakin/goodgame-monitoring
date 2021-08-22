@@ -39,11 +39,11 @@ public class ArticleMonitoring {
         var articles = articleParser.parseContent(response.body());
         if (lastArticleDate == null) {
             logger.info("Initialized monitoring");
-            lastArticleDate = articles.get(0).getDate();
+            lastArticleDate = articles.get(0).date();
         }
 
         int lastIdx = 0;
-        while (lastIdx < articles.size() && lastArticleDate < articles.get(lastIdx).getDate()) {
+        while (lastIdx < articles.size() && lastArticleDate < articles.get(lastIdx).date()) {
             ++lastIdx;
         }
         if (lastIdx != 0) {
@@ -53,17 +53,17 @@ public class ArticleMonitoring {
             var article = articles.get(i);
             var result = channelController.sendArticle(
                 article,
-                storage.getArticle(article.getLink()).orElse(null)
+                storage.getArticle(article.link()).orElse(null)
             );
             result.peek(message -> {
-                if (!article.isTournament()) {
-                    storage.insertArticle(article.getLink(), message);
+                if (!article.tournament()) {
+                    storage.insertArticle(article.link(), message);
                 }
             }).peekLeft(error -> {
-                logger.error("Something wrong with {}", article.getLink());
+                logger.error("Something wrong with {}", article.link());
                 userController.notifyAdmin(error.getMessage());
             });
-            lastArticleDate = article.getDate();
+            lastArticleDate = article.date();
         }
     }
 

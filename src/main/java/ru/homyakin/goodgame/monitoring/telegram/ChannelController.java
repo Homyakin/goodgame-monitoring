@@ -45,10 +45,10 @@ public class ChannelController {
 
     private Either<EitherError, Message> updateMessage(@NotNull Article article, @NotNull Message message) {
         if (article.toString().equals(message.getCaption())) {
-            logger.info("Article {} is not required to be updated", article.getLink());
+            logger.info("Article {} is not required to be updated", article.link());
             return Either.right(message);
         }
-        logger.info("Updating {} for new text: {}", article.getLink(), article.toString());
+        logger.info("Updating {} for new text: {}", article.link(), article.toString());
         if (message.getCaption() != null) {
             return bot.editMessage(TelegramMessageBuilder.createEditMessageCaption(message, article));
         } else {

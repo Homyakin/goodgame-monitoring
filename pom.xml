@@ -9,7 +9,7 @@
     <version>0.5.1</version>
 
     <properties>
-        <java.version>16</java.version>
+        <java.version>17</java.version>
         <spring.version>2.5.4</spring.version>
         <start-class>ru.homyakin.goodgame.monitoring.Application</start-class>
     </properties>

@@ -1,4 +1,4 @@
-package ru.homyakin.goodgame.monitoring.article.models;
+package ru.homyakin.goodgame.monitoring.models;
 
 import javax.validation.constraints.NotNull;
 

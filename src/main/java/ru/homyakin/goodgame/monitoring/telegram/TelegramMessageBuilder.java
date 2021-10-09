@@ -11,7 +11,7 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageCa
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import ru.homyakin.goodgame.monitoring.article.models.Article;
+import ru.homyakin.goodgame.monitoring.models.Article;
 
 @Component
 public class TelegramMessageBuilder {

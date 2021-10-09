@@ -1,11 +1,11 @@
-package ru.homyakin.goodgame.monitoring.article.service.parser;
+package ru.homyakin.goodgame.monitoring.service.parser;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Component;
-import ru.homyakin.goodgame.monitoring.article.models.Article;
+import ru.homyakin.goodgame.monitoring.models.Article;
 
 @Component
 public class ArticleParser {

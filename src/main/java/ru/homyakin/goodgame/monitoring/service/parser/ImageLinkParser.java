@@ -1,4 +1,4 @@
-package ru.homyakin.goodgame.monitoring.article.service.parser;
+package ru.homyakin.goodgame.monitoring.service.parser;
 
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Component;

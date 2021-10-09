@@ -1,4 +1,4 @@
-package ru.homyakin.goodgame.monitoring.article.web;
+package ru.homyakin.goodgame.monitoring.service;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -9,7 +9,6 @@ import java.net.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import ru.homyakin.goodgame.monitoring.article.web.exceptions.RequestException;
 
 @Component
 public class ArticleScanner {
@@ -35,7 +34,7 @@ public class ArticleScanner {
             return response;
         } catch (InterruptedException | IOException e) {
             logger.error("Something went wrong during request", e);
-            throw new RequestException("Something went wrong during request", e);
+            throw new IllegalStateException("Something went wrong during request", e);
         }
     }
 }

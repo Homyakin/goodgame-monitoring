@@ -1,4 +1,4 @@
-package ru.homyakin.goodgame.monitoring.article.service;
+package ru.homyakin.goodgame.monitoring.service;
 
 import java.time.Duration;
 import java.util.ArrayList;

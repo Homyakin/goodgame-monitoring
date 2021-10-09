@@ -2,7 +2,7 @@ package parser;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.homyakin.goodgame.monitoring.article.service.parser.ImageLinkParser;
+import ru.homyakin.goodgame.monitoring.service.parser.ImageLinkParser;
 import utils.FileUtils;
 
 public class ImageLinkParserTest {

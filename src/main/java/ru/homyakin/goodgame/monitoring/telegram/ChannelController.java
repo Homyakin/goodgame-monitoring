@@ -45,7 +45,6 @@ public class ChannelController {
 
     public Either<EitherError, Message> updateMessage(@NotNull Article article, @NotNull Message message) {
         if (article.toString().equals(message.getCaption())) {
-            logger.info("Article {} is not required to be updated", article.link());
             return Either.right(message);
         }
         logger.info("Updating {} for new text: {}", article.link(), article.toString());

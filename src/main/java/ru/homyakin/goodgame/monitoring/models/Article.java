@@ -8,7 +8,7 @@ public record Article(
     @NotNull String text,
     @NotNull String link,
     long date,
-    boolean tournament
+    boolean isTournament
 ) {
 
     public MediaType getMediaType() {

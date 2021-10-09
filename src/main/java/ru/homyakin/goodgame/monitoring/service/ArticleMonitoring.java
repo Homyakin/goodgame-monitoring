@@ -43,7 +43,7 @@ public class ArticleMonitoring {
                     .map(message -> channelController.updateMessage(article, message))
                     .orElseGet(() -> channelController.sendArticle(article));
                 result.peek(message -> {
-                    if (!article.tournament()) {
+                    if (!article.isTournament()) {
                         storage.insertArticle(article.link(), message);
                     }
                 }).peekLeft(error -> {

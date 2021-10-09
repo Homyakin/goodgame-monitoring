@@ -42,11 +42,9 @@ public class ArticleMonitoring {
                 final var result = storage.getArticleMessage(article.link())
                     .map(message -> channelController.updateMessage(article, message))
                     .orElseGet(() -> channelController.sendArticle(article));
-                result.peek(message -> {
-                    if (!article.isTournament()) {
-                        storage.insertArticle(article.link(), message);
-                    }
-                }).peekLeft(error -> {
+                result
+                    .peek(message -> storage.insertArticle(article.link(), message))
+                    .peekLeft(error -> {
                     logger.error("Something wrong with {}", article.link());
                     userController.notifyAdmin(error.getMessage());
                 });

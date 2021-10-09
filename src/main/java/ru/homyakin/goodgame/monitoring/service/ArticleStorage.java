@@ -26,11 +26,15 @@ public class ArticleStorage {
     public void removeOldArticles() {
         var oldArticles = new ArrayList<String>();
         for (var article : lastArticles.entrySet()) {
+            int ttl = 48;
+            if (Optional.ofNullable(article.getValue().getCaption()).orElse("").contains("cup")) {
+                ttl = 8; // TODO move to yaml
+            }
             if (
                 Duration.between(
                     DateTimeUtils.longToMoscowDateTime(article.getValue().getDate()),
                     DateTimeUtils.moscowTime()
-                ).toHours() > 48
+                ).toHours() > ttl
             ) {
                 oldArticles.add(article.getKey());
             }

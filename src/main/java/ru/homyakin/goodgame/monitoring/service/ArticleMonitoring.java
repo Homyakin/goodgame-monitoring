@@ -1,5 +1,6 @@
 package ru.homyakin.goodgame.monitoring.service;
 
+import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,7 +17,7 @@ public class ArticleMonitoring {
     private final ArticleParser articleParser;
     private final ChannelController channelController;
     private final UserController userController;
-    private Long lastArticleDate = null;
+    private final Long initializedDate = Instant.now().getEpochSecond();
 
     public ArticleMonitoring(
         ArticleScanner articleScanner,
@@ -35,35 +36,21 @@ public class ArticleMonitoring {
     @Scheduled(fixedDelay = 60 * 1000)
     public void monitor() {
         var response = articleScanner.getLastArticles();
-        var articles = articleParser.parseContent(response.body());
-        if (lastArticleDate == null) {
-            logger.info("Initialized monitoring");
-            lastArticleDate = articles.get(0).date();
-        }
-
-        int lastIdx = 0;
-        while (lastIdx < articles.size() && lastArticleDate < articles.get(lastIdx).date()) {
-            ++lastIdx;
-        }
-        if (lastIdx != 0) {
-            logger.info("Got {} new articles", lastIdx);
-        }
-        for (int i = lastIdx - 1; i >= 0; --i) {
-            var article = articles.get(i);
-            var result = channelController.sendArticle(
-                article,
-                storage.getArticle(article.link()).orElse(null)
-            );
-            result.peek(message -> {
-                if (!article.tournament()) {
-                    storage.insertArticle(article.link(), message);
-                }
-            }).peekLeft(error -> {
-                logger.error("Something wrong with {}", article.link());
-                userController.notifyAdmin(error.getMessage());
+        articleParser.parseContent(response.body()).stream()
+            .filter(article -> article.date() > initializedDate)
+            .forEach(article -> {
+                final var result = storage.getArticleMessage(article.link())
+                    .map(message -> channelController.updateMessage(article, message))
+                    .orElseGet(() -> channelController.sendArticle(article));
+                result.peek(message -> {
+                    if (!article.tournament()) {
+                        storage.insertArticle(article.link(), message);
+                    }
+                }).peekLeft(error -> {
+                    logger.error("Something wrong with {}", article.link());
+                    userController.notifyAdmin(error.getMessage());
+                });
             });
-            lastArticleDate = article.date();
-        }
-    }
 
+    }
 }

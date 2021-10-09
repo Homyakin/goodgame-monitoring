@@ -29,16 +29,13 @@ public class ChannelController {
         this.userController = userController;
     }
 
-    public Either<EitherError, Message> sendArticle(@NotNull Article article, @Nullable Message message) {
+    public Either<EitherError, Message> sendArticle(@NotNull Article article) {
         try {
-            if (message != null) {
-                return updateMessage(article, message);
-            } else {
-                return switch (article.getMediaType()) {
-                    case IMAGE -> bot.send(TelegramMessageBuilder.creteSendPhotoFromArticle(article, channel));
-                    case GIF -> bot.send(TelegramMessageBuilder.createSendAnimationFromArticle(article, channel));
-                };
-            }
+            logger.info("Sending new article {}", article.link());
+            return switch (article.getMediaType()) {
+                case IMAGE -> bot.send(TelegramMessageBuilder.creteSendPhotoFromArticle(article, channel));
+                case GIF -> bot.send(TelegramMessageBuilder.createSendAnimationFromArticle(article, channel));
+            };
         } catch (IOException e) {
             logger.error("Error during sending photo", e);
             userController.notifyAdmin("Error during sending photo\n" + CommonUtils.getStringStackTrace(e));
@@ -46,7 +43,7 @@ public class ChannelController {
         }
     }
 
-    private Either<EitherError, Message> updateMessage(@NotNull Article article, @NotNull Message message) {
+    public Either<EitherError, Message> updateMessage(@NotNull Article article, @NotNull Message message) {
         if (article.toString().equals(message.getCaption())) {
             logger.info("Article {} is not required to be updated", article.link());
             return Either.right(message);

@@ -14,7 +14,7 @@ import ru.homyakin.goodgame.monitoring.utils.DateTimeUtils;
 public class ArticleStorage {
     private final Map<String, Message> lastArticles = new HashMap<>();
 
-    public Optional<Message> getArticle(String url) {
+    public Optional<Message> getArticleMessage(String url) {
         return Optional.ofNullable(lastArticles.get(url));
     }
 

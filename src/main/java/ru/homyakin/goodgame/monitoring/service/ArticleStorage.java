@@ -28,7 +28,7 @@ public class ArticleStorage {
         for (var article : lastArticles.entrySet()) {
             int ttl = 48;
             if (Optional.ofNullable(article.getValue().getCaption()).orElse("").contains("cup")) {
-                ttl = 8; // TODO move to yaml
+                ttl = 48; // TODO нужно поменять логику. Если новость еще в находится на странице, ее нельзя удалять.
             }
             if (
                 Duration.between(

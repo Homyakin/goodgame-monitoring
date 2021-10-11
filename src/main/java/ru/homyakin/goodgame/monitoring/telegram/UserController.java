@@ -2,6 +2,7 @@ package ru.homyakin.goodgame.monitoring.telegram;
 
 import javax.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
+import ru.homyakin.goodgame.monitoring.config.BotConfiguration;
 
 @Component
 public class UserController {

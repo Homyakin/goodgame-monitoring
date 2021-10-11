@@ -2,12 +2,12 @@ package ru.homyakin.goodgame.monitoring.telegram;
 
 import io.vavr.control.Either;
 import java.io.IOException;
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import ru.homyakin.goodgame.monitoring.config.BotConfiguration;
 import ru.homyakin.goodgame.monitoring.models.Article;
 import ru.homyakin.goodgame.monitoring.models.EitherError;
 import ru.homyakin.goodgame.monitoring.utils.CommonUtils;

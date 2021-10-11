@@ -1,6 +1,7 @@
 package ru.homyakin.goodgame.monitoring.service;
 
 import java.time.Instant;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -36,19 +37,20 @@ public class ArticleMonitoring {
     @Scheduled(fixedDelay = 60 * 1000)
     public void monitor() {
         var response = articleScanner.getLastArticles();
-        articleParser.parseContent(response.body()).stream()
+        var articles = articleParser.parseContent(response.body()).stream()
             .filter(article -> article.date() > initializedDate)
-            .forEach(article -> {
-                final var result = storage.getArticleMessage(article.link())
+            .toList();
+        articles.forEach(article -> {
+                final var result = storage.getArticleMessage(article)
                     .map(message -> channelController.updateMessage(article, message))
                     .orElseGet(() -> channelController.sendArticle(article));
                 result
-                    .peek(message -> storage.insertArticle(article.link(), message))
+                    .peek(message -> storage.insertArticle(article, message))
                     .peekLeft(error -> {
-                    logger.error("Something wrong with {}", article.link());
-                    userController.notifyAdmin(error.getMessage());
-                });
+                        logger.error("Something wrong with {}", article.link());
+                        userController.notifyAdmin(error.getMessage());
+                    });
             });
-
+        storage.markArticlesNotOnNewsPage(articles);
     }
 }

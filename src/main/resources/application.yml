@@ -1,7 +1,10 @@
 spring:
   profiles:
     active: dev
-
+  task:
+    scheduling:
+      pool:
+        size: 5
 ru:
   homyakin:
     goodgame:

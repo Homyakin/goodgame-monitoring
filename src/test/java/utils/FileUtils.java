@@ -9,7 +9,7 @@ import org.jsoup.nodes.Document;
 public class FileUtils {
     public static Document parseHtmlFile(String fileName) {
         try {
-            var file = FileUtils.class.getClassLoader().getResource(fileName).getFile();
+            final var file = FileUtils.class.getClassLoader().getResource(fileName).getFile();
             return Jsoup.parse(Files.readString(Paths.get(file)));
         } catch (IOException e) {
             throw new IllegalStateException(e);

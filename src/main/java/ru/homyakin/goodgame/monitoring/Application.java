@@ -19,7 +19,7 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        var telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
+        final var telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
         telegramBotsApi.registerBot(bot);
     }
 

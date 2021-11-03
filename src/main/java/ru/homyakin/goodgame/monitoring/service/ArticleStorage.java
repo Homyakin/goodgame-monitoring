@@ -34,14 +34,14 @@ public class ArticleStorage {
     }
 
     public void markArticlesNotOnNewsPage(List<Article> articles) {
-        var notOnNewsPage = new ArrayList<String>();
-        for (var savedArticle: lastArticles.entrySet()) {
+        final var notOnNewsPage = new ArrayList<String>();
+        for (final var savedArticle: lastArticles.entrySet()) {
             if (!articles.contains(savedArticle.getValue().article())) {
                 notOnNewsPage.add(savedArticle.getKey());
             }
         }
-        for (var url: notOnNewsPage) {
-            var savedArticle = lastArticles.get(url);
+        for (final var url: notOnNewsPage) {
+            final var savedArticle = lastArticles.get(url);
             if (savedArticle.isOnNewsPage()) {
                 lastArticles.put(url, savedArticle.copyWithNotOnNewsPage());
             }
@@ -50,8 +50,8 @@ public class ArticleStorage {
 
     @Scheduled(fixedDelay = 60 * 60 * 1000)
     public void removeOldArticles() {
-        var oldArticles = new ArrayList<String>();
-        for (var article : lastArticles.entrySet()) {
+        final var oldArticles = new ArrayList<String>();
+        for (final var article : lastArticles.entrySet()) {
             if (article.getValue().isOnNewsPage()) continue;
             int ttl = newsTtlInHours;
             if (article.getValue().article().isTournament()) {
@@ -66,7 +66,7 @@ public class ArticleStorage {
                 oldArticles.add(article.getKey());
             }
         }
-        for (var url : oldArticles) {
+        for (final var url : oldArticles) {
             lastArticles.remove(url);
         }
     }

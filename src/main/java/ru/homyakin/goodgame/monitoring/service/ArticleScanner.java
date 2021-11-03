@@ -26,7 +26,7 @@ public class ArticleScanner {
 
     public HttpResponse<String> getLastArticles() {
         try {
-            var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            final var response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != HttpURLConnection.HTTP_OK) {
                 logger.error("Http code is not ok: {}", response.statusCode());
                 throw new IllegalStateException("Http code is not ok.");

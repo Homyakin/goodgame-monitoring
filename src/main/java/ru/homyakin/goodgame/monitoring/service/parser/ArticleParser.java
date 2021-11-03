@@ -18,10 +18,10 @@ public class ArticleParser {
     }
 
     public List<Article> parseContent(String html) {
-        var doc = Jsoup.parse(html);
-        var elements = doc.getElementsByClass("news-element");
-        List<Article> articles = new ArrayList<>();
-        for (var element : elements) {
+        final var doc = Jsoup.parse(html);
+        final var elements = doc.getElementsByClass("news-element");
+        final List<Article> articles = new ArrayList<>();
+        for (final var element : elements) {
             articles.add(createArticle(element));
         }
         articles.sort((n1, n2) -> Long.compare(n2.date(), n1.date()));
@@ -29,18 +29,18 @@ public class ArticleParser {
     }
 
     private Article createArticle(Element articleElement) {
-        var imageLink = imageLinkParser.getImageLink(articleElement);
-        var infoBlock = getInfoBlock(articleElement);
-        var tournament = isTournament(infoBlock);
-        var info = getInfo(infoBlock);
+        final var imageLink = imageLinkParser.getImageLink(articleElement);
+        final var infoBlock = getInfoBlock(articleElement);
+        final var tournament = isTournament(infoBlock);
+        final var info = getInfo(infoBlock);
         String text;
         if (tournament) {
             text = tournamentParser.getTournamentInfo(infoBlock);
         } else {
             text = getText(infoBlock);
         }
-        var link = getLink(infoBlock);
-        var date = getDate(infoBlock);
+        final var link = getLink(infoBlock);
+        final var date = getDate(infoBlock);
         return new Article(imageLink, info, text, link, date, tournament);
     }
 
@@ -63,13 +63,13 @@ public class ArticleParser {
 
     private String getText(Element infoElement) {
         var text = "";
-        var textBlocks = infoElement.getElementsByClass("text-block");
+        final var textBlocks = infoElement.getElementsByClass("text-block");
         text += getUpdate(infoElement);
-        var textTags = textBlocks
+        final var textTags = textBlocks
             .get(0)
             .getElementsByTag("p");
-        var textBuilder = new StringBuilder();
-        int size = textTags.size();
+        final var textBuilder = new StringBuilder();
+        final int size = textTags.size();
         for (int i = 0; i < size; ++i) {
             textBuilder.append(textTags.get(i).text());
             if (i != size - 1) {
@@ -77,7 +77,7 @@ public class ArticleParser {
             }
         }
         text += textBuilder.toString();
-        var listBlock = textBlocks
+        final var listBlock = textBlocks
             .get(0)
             .getElementsByTag("ul");
         if (listBlock.size() != 0) {
@@ -87,7 +87,7 @@ public class ArticleParser {
     }
 
     private String getUpdate(Element infoElement) {
-        var blocks = infoElement.getElementsByClass("update-block");
+        final var blocks = infoElement.getElementsByClass("update-block");
         if (blocks.size() != 0) {
             return "Обновление: " + blocks.get(0).text() + "\n\n";
         } else {
@@ -96,9 +96,9 @@ public class ArticleParser {
     }
 
     private String getList(Element listElement) {
-        var items = listElement.getElementsByTag("li");
-        var builder = new StringBuilder("");
-        for (var item : items) {
+        final var items = listElement.getElementsByTag("li");
+        final var builder = new StringBuilder("");
+        for (final var item : items) {
             builder.append("• ").append(item.text()).append("\n");
         }
         return builder.toString();

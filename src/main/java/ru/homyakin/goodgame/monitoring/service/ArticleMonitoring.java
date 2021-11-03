@@ -36,8 +36,8 @@ public class ArticleMonitoring {
 
     @Scheduled(fixedDelay = 60 * 1000)
     public void monitor() {
-        var response = articleScanner.getLastArticles();
-        var articles = articleParser.parseContent(response.body()).stream()
+        final var response = articleScanner.getLastArticles();
+        final var articles = articleParser.parseContent(response.body()).stream()
             .filter(article -> article.date() > initializedDate)
             .toList();
         articles.forEach(article -> {

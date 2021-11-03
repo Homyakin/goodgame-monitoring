@@ -26,7 +26,7 @@ public class ImageLinkParser {
 
     private String getTournamentImageLink(Element articleElement) {
         // В обычных новостях здесь лежит заглушка
-        var link = articleElement
+        final var link = articleElement
             .getElementsByClass("img-block")
             .get(0)
             .getElementsByTag("a")

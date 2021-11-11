@@ -40,17 +40,19 @@ public class ArticleMonitoring {
         final var articles = articleParser.parseContent(response.body()).stream()
             .filter(article -> article.date() > initializedDate)
             .toList();
+
         articles.forEach(article -> {
-                final var result = storage.getArticleMessage(article)
-                    .map(message -> channelController.updateMessage(article, message))
-                    .orElseGet(() -> channelController.sendArticle(article));
-                result
-                    .peek(message -> storage.insertArticle(article, message))
-                    .peekLeft(error -> {
-                        logger.error("Something wrong with {}", article.link());
-                        userController.notifyAdmin(error.getMessage());
-                    });
-            });
+            final var result = storage.getArticleMessage(article)
+                .map(message -> channelController.updateMessage(article, message))
+                .orElseGet(() -> channelController.sendArticle(article));
+            result
+                .peek(message -> storage.insertArticle(article, message))
+                .peekLeft(error -> {
+                    logger.error("Something wrong with {}", article.link());
+                    userController.notifyAdmin(error.getMessage());
+                });
+        });
+
         storage.markArticlesNotOnNewsPage(articles);
     }
 }

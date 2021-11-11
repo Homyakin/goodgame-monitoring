@@ -17,8 +17,8 @@ import ru.homyakin.goodgame.monitoring.utils.DateTimeUtils;
 @Service
 public class ArticleStorage {
     private final Map<String, SavedArticle> lastArticles = new HashMap<>();
-    private Integer newsTtlInHours;
-    private Integer tournamentTtlInHours;
+    private final Integer newsTtlInHours;
+    private final Integer tournamentTtlInHours;
 
     public ArticleStorage(StorageConfiguration configuration) {
         newsTtlInHours = configuration.getNewsTtlInHours();

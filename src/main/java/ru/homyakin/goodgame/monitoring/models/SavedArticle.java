@@ -5,14 +5,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 
 public record SavedArticle(
     @NotNull Article article,
-    @NotNull Message message,
-    boolean isOnNewsPage
+    @NotNull Message message
 ) {
-    public SavedArticle copyWithNotOnNewsPage() {
-        return new SavedArticle(
-            article,
-            message,
-            false
-        );
-    }
 }

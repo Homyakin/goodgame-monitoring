@@ -7,10 +7,6 @@ spring:
         size: 5
 ru:
   homyakin:
-    goodgame:
-      storage:
-        news-ttl-in-hours: 24
-        tournament-ttl-in-hours: 12
     telegram:
       bot:
         admin-id: 210753724

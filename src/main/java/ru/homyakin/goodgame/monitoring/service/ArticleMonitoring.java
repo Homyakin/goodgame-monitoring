@@ -1,13 +1,10 @@
 package ru.homyakin.goodgame.monitoring.service;
 
-import io.vavr.control.Either;
 import java.time.Instant;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import ru.homyakin.goodgame.monitoring.models.SavedArticle;
 import ru.homyakin.goodgame.monitoring.service.parser.ArticleParser;
 import ru.homyakin.goodgame.monitoring.telegram.ChannelController;
 import ru.homyakin.goodgame.monitoring.telegram.UserController;
@@ -36,25 +33,22 @@ public class ArticleMonitoring {
         this.userController = userController;
     }
 
-    @Scheduled(fixedDelay = 60 * 1000)
+    @Scheduled(fixedDelay = 5 * 60 * 1000)
     public void monitor() {
         final var response = articleScanner.getLastArticles();
-        final var articles = articleParser.parseContent(response.body()).stream()
+        articleParser.parseContent(response.body()).stream()
             .filter(article -> article.date() > initializedDate)
-            .map(
+            .forEach(
                 article -> storage.getArticleMessage(article)
                     .map(message -> channelController.updateMessage(article, message))
                     .orElseGet(() -> channelController.sendArticle(article))
-                    .map(message -> new SavedArticle(article, message))
+                    .peek(message -> storage.addOrUpdateArticle(article, message))
                     .peekLeft(error -> {
                         logger.error("Something wrong with {}", article.link());
                         userController.notifyAdmin(error.getMessage());
                     })
-            )
-            .filter(Either::isRight)
-            .map(Either::get)
-            .toList();
+            );
 
-        storage.refreshArticlesOnNewsPage(articles);
+        storage.deleteOldMessages();
     }
 }

@@ -16,7 +16,7 @@ import ru.homyakin.goodgame.monitoring.utils.DateTimeUtils;
 @Service
 public class ArticleStorage {
     private final static Logger logger = LoggerFactory.getLogger(ArticleStorage.class);
-    private final static int TTL = 48;
+    private final static int TTL_IN_HOURS = 48;
     private final Map<String, SavedMessage> articlesToMessages = new HashMap<>();
 
     public Optional<Message> getArticleMessage(Article article) {
@@ -36,7 +36,7 @@ public class ArticleStorage {
             if (Duration.between(
                 entry.getValue().lastUpdate(),
                 DateTimeUtils.moscowTime()
-            ).toHours() > TTL) {
+            ).toHours() > TTL_IN_HOURS) {
                 oldArticles.add(entry.getKey());
             }
         }

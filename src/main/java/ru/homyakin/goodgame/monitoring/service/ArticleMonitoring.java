@@ -1,6 +1,7 @@
 package ru.homyakin.goodgame.monitoring.service;
 
 import java.time.Instant;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -33,8 +34,10 @@ public class ArticleMonitoring {
         this.userController = userController;
     }
 
-    @Scheduled(fixedDelay = 5 * 60 * 1000)
+    @Scheduled(fixedRate = 5 * 60 * 1000)
     public void monitor() {
+        final var monitoringUuid = UUID.randomUUID().toString();
+        logger.info("Start monitoring " + monitoringUuid);
         final var response = articleScanner.getLastArticles();
         articleParser.parseContent(response.body()).stream()
             .filter(article -> article.date() > initializedDate)
@@ -50,5 +53,6 @@ public class ArticleMonitoring {
             );
 
         storage.deleteOldMessages();
+        logger.info("Finish monitoring " + monitoringUuid);
     }
 }

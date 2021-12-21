@@ -17,11 +17,11 @@ import ru.homyakin.goodgame.monitoring.models.Article;
 public class TelegramMessageBuilder {
     private final static int MAX_TELEGRAM_MESSAGE = 4000;
 
-    public static SendAnimation createSendAnimationFromArticle(@NotNull Article article, @NotNull String chatId) throws IOException  {
+    public static SendAnimation createSendAnimationFromArticle(@NotNull Article article, @NotNull String chatId) throws IOException {
         return SendAnimation
             .builder()
             .chatId(chatId)
-            .caption(article.toString().substring(0, MAX_TELEGRAM_MESSAGE))
+            .caption(substringToTelegramLength(article.toString()))
             .animation(new InputFile(article.mediaLink()))
             .build();
     }
@@ -31,7 +31,7 @@ public class TelegramMessageBuilder {
             .builder()
             .chatId(message.getChatId().toString())
             .messageId(message.getMessageId())
-            .caption(article.toString().substring(0, MAX_TELEGRAM_MESSAGE))
+            .caption(substringToTelegramLength(article.toString()))
             .build();
     }
 
@@ -40,7 +40,7 @@ public class TelegramMessageBuilder {
             .builder()
             .chatId(message.getChatId().toString())
             .messageId(message.getMessageId())
-            .text(article.toString().substring(0, MAX_TELEGRAM_MESSAGE))
+            .text(substringToTelegramLength(article.toString()))
             .disableWebPagePreview(true)
             .build();
     }
@@ -49,7 +49,7 @@ public class TelegramMessageBuilder {
         return SendMessage.builder()
             .chatId(chatId)
             .disableWebPagePreview(true)
-            .text(article.toString().substring(0, MAX_TELEGRAM_MESSAGE))
+            .text(substringToTelegramLength(article.toString()))
             .build();
     }
 
@@ -57,7 +57,7 @@ public class TelegramMessageBuilder {
         return SendMessage.builder()
             .chatId(chatId)
             .disableWebPagePreview(true)
-            .text(text.substring(0, MAX_TELEGRAM_MESSAGE))
+            .text(substringToTelegramLength(text))
             .build();
     }
 
@@ -66,7 +66,11 @@ public class TelegramMessageBuilder {
             .builder()
             .photo(new InputFile(new URL(article.mediaLink()).openStream(), article.link()))
             .chatId(chatId)
-            .caption(article.toString().substring(0, MAX_TELEGRAM_MESSAGE))
+            .caption(substringToTelegramLength(article.toString()))
             .build();
+    }
+
+    private static String substringToTelegramLength(String s) {
+        return s.substring(0, Math.min(s.length() - 1, MAX_TELEGRAM_MESSAGE));
     }
 }

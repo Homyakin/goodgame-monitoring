@@ -71,6 +71,6 @@ public class TelegramMessageBuilder {
     }
 
     private static String substringToTelegramLength(String s) {
-        return s.substring(0, Math.min(s.length() - 1, MAX_TELEGRAM_MESSAGE));
+        return s.substring(0, Math.min(s.length(), MAX_TELEGRAM_MESSAGE));
     }
 }

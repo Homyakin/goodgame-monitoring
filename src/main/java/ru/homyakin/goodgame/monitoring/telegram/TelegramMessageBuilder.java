@@ -15,12 +15,13 @@ import ru.homyakin.goodgame.monitoring.models.Article;
 
 @Component
 public class TelegramMessageBuilder {
+    private final static int MAX_TELEGRAM_MESSAGE = 4000;
 
     public static SendAnimation createSendAnimationFromArticle(@NotNull Article article, @NotNull String chatId) throws IOException  {
         return SendAnimation
             .builder()
             .chatId(chatId)
-            .caption(article.toString())
+            .caption(article.toString().substring(0, MAX_TELEGRAM_MESSAGE))
             .animation(new InputFile(article.mediaLink()))
             .build();
     }
@@ -30,7 +31,7 @@ public class TelegramMessageBuilder {
             .builder()
             .chatId(message.getChatId().toString())
             .messageId(message.getMessageId())
-            .caption(article.toString())
+            .caption(article.toString().substring(0, MAX_TELEGRAM_MESSAGE))
             .build();
     }
 
@@ -39,7 +40,7 @@ public class TelegramMessageBuilder {
             .builder()
             .chatId(message.getChatId().toString())
             .messageId(message.getMessageId())
-            .text(article.toString())
+            .text(article.toString().substring(0, MAX_TELEGRAM_MESSAGE))
             .disableWebPagePreview(true)
             .build();
     }
@@ -48,7 +49,7 @@ public class TelegramMessageBuilder {
         return SendMessage.builder()
             .chatId(chatId)
             .disableWebPagePreview(true)
-            .text(article.toString())
+            .text(article.toString().substring(0, MAX_TELEGRAM_MESSAGE))
             .build();
     }
 
@@ -56,7 +57,7 @@ public class TelegramMessageBuilder {
         return SendMessage.builder()
             .chatId(chatId)
             .disableWebPagePreview(true)
-            .text(text)
+            .text(text.substring(0, MAX_TELEGRAM_MESSAGE))
             .build();
     }
 
@@ -65,7 +66,7 @@ public class TelegramMessageBuilder {
             .builder()
             .photo(new InputFile(new URL(article.mediaLink()).openStream(), article.link()))
             .chatId(chatId)
-            .caption(article.toString())
+            .caption(article.toString().substring(0, MAX_TELEGRAM_MESSAGE))
             .build();
     }
 }

@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 
 public record Article(
     @NotNull String mediaLink,
-    @NotNull String info,
+    @NotNull String title,
     @NotNull String text,
     @NotNull String link,
     long date,
@@ -21,7 +21,13 @@ public record Article(
 
     @Override
     public String toString() {
-        return info + "\n\n" + text + "\n\n" + link;
+        var s = title + "\n\n" + text;
+        if (s.endsWith("\n")) {
+            s += "\n";
+        } else {
+            s += "\n\n";
+        }
+        return s + link;
     }
 
     public enum MediaType {

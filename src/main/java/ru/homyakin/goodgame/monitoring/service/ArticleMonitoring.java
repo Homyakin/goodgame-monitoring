@@ -39,7 +39,11 @@ public class ArticleMonitoring {
         final var monitoringUuid = UUID.randomUUID().toString();
         logger.info("Start monitoring " + monitoringUuid);
         final var response = articleScanner.getLastArticles();
-        articleParser.parseContent(response.body()).stream()
+        var result = articleParser.parseContent(response.body());
+        if (result.isLeft()) {
+            userController.notifyAdmin(result.getLeft().getMessage());
+        }
+        result.get().stream()
             .filter(article -> article.date() > initializedDate)
             .forEach(
                 article -> storage.getArticleMessage(article)

@@ -21,7 +21,7 @@ public class TelegramMessageBuilder {
         return SendAnimation
             .builder()
             .chatId(chatId)
-            .caption(substringToTelegramLength(article.toString()))
+            .caption(substringToTelegramLength(article.toMessageText()))
             .animation(new InputFile(article.mediaLink()))
             .build();
     }
@@ -31,7 +31,7 @@ public class TelegramMessageBuilder {
             .builder()
             .chatId(message.getChatId().toString())
             .messageId(message.getMessageId())
-            .caption(substringToTelegramLength(article.toString()))
+            .caption(substringToTelegramLength(article.toMessageText()))
             .build();
     }
 
@@ -40,7 +40,7 @@ public class TelegramMessageBuilder {
             .builder()
             .chatId(message.getChatId().toString())
             .messageId(message.getMessageId())
-            .text(substringToTelegramLength(article.toString()))
+            .text(substringToTelegramLength(article.toMessageText()))
             .disableWebPagePreview(true)
             .build();
     }
@@ -49,7 +49,7 @@ public class TelegramMessageBuilder {
         return SendMessage.builder()
             .chatId(chatId)
             .disableWebPagePreview(true)
-            .text(substringToTelegramLength(article.toString()))
+            .text(substringToTelegramLength(article.toMessageText()))
             .build();
     }
 
@@ -66,7 +66,7 @@ public class TelegramMessageBuilder {
             .builder()
             .photo(new InputFile(new URL(article.mediaLink()).openStream(), article.link()))
             .chatId(chatId)
-            .caption(substringToTelegramLength(article.toString()))
+            .caption(substringToTelegramLength(article.toMessageText()))
             .build();
     }
 

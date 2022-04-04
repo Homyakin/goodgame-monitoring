@@ -19,6 +19,7 @@ public class ArticleMonitoring {
     private final ChannelController channelController;
     private final UserController userController;
     private final Long initializedDate = Instant.now().getEpochSecond();
+    private Long monitoringCount = 0L;
 
     public ArticleMonitoring(
         ArticleScanner articleScanner,
@@ -32,6 +33,7 @@ public class ArticleMonitoring {
         this.articleParser = articleParser;
         this.channelController = channelController;
         this.userController = userController;
+        logger.info("initializedDate= " + initializedDate.toString());
     }
 
     @Scheduled(fixedRate = 5 * 60 * 1000)
@@ -42,6 +44,9 @@ public class ArticleMonitoring {
         var result = articleParser.parseContent(response.body());
         if (result.isLeft()) {
             userController.notifyAdmin(result.getLeft().getMessage());
+        }
+        if (monitoringCount % 12 == 0) { // Раз в час
+            logger.info("Get new articles: " + result.get().toString());
         }
         result.get().stream()
             .filter(article -> article.date() > initializedDate)
@@ -57,6 +62,7 @@ public class ArticleMonitoring {
             );
 
         storage.deleteOldMessages();
+        ++monitoringCount;
         logger.info("Finish monitoring " + monitoringUuid);
     }
 }

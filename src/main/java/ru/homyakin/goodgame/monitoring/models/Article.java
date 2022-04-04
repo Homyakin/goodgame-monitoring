@@ -21,6 +21,10 @@ public record Article(
 
     @Override
     public String toString() {
+        return String.format("Article(link=%s, date=%d)", link, date);
+    }
+
+    public String toMessageText() {
         var s = title + "\n\n" + text;
         if (s.endsWith("\n")) {
             s += "\n";

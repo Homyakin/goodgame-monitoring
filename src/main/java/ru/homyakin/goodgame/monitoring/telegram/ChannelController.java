@@ -45,10 +45,10 @@ public class ChannelController {
 
     public Either<EitherError, Message> updateMessage(@NotNull Article article, @NotNull Message message) {
         if (message.getCaption() != null) {
-            if (article.toString().equals(message.getCaption())) {
+            if (article.toMessageText().equals(message.getCaption())) {
                 return Either.right(message);
             } else {
-                logger.info("Updating {} for new caption: {}", article.link(), article.toString());
+                logger.info("Updating {} for new caption: {}", article.link(), article.toMessageText());
                 return bot.edit(TelegramMessageBuilder.createEditMessageCaptionFromArticle(message, article));
             }
         } else {
@@ -59,10 +59,10 @@ public class ChannelController {
 
     private Either<EitherError, Message> updateTextMessage(@NotNull Article article, @NotNull Message message) {
         //TODO add photo
-        if (article.toString().equals(message.getText())) {
+        if (article.toMessageText().equals(message.getText())) {
             return Either.right(message);
         } else {
-            logger.info("Updating {} for new text: {}", article.link(), article.toString());
+            logger.info("Updating {} for new text: {}", article.link(), article.toMessageText());
             return bot.edit(TelegramMessageBuilder.createEditMessageTextFromArticle(message, article));
         }
     }

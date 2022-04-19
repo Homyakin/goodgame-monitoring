@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import javax.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -23,6 +24,7 @@ public class TelegramMessageBuilder {
             .chatId(chatId)
             .caption(substringToTelegramLength(article.toMessageText()))
             .animation(new InputFile(article.mediaLink()))
+            .parseMode(ParseMode.HTML)
             .build();
     }
 
@@ -32,6 +34,7 @@ public class TelegramMessageBuilder {
             .chatId(message.getChatId().toString())
             .messageId(message.getMessageId())
             .caption(substringToTelegramLength(article.toMessageText()))
+            .parseMode(ParseMode.HTML)
             .build();
     }
 
@@ -42,6 +45,7 @@ public class TelegramMessageBuilder {
             .messageId(message.getMessageId())
             .text(substringToTelegramLength(article.toMessageText()))
             .disableWebPagePreview(true)
+            .parseMode(ParseMode.HTML)
             .build();
     }
 
@@ -50,6 +54,7 @@ public class TelegramMessageBuilder {
             .chatId(chatId)
             .disableWebPagePreview(true)
             .text(substringToTelegramLength(article.toMessageText()))
+            .parseMode(ParseMode.HTML)
             .build();
     }
 
@@ -67,6 +72,7 @@ public class TelegramMessageBuilder {
             .photo(new InputFile(new URL(article.mediaLink()).openStream(), article.link()))
             .chatId(chatId)
             .caption(substringToTelegramLength(article.toMessageText()))
+            .parseMode(ParseMode.HTML)
             .build();
     }
 

@@ -65,6 +65,7 @@ public record GoodGameArticle(
         if (update != null) {
             var prettyUpdate = update
                 .replace("<p class=\"ng-scope\">", "")
+                .replace("<p>", "")
                 .replace("</p>", "")
                 .replace("\n\n", "\n");
             text = prettyUpdate;

@@ -19,14 +19,14 @@ public class ArticleStorage {
     private final static int TTL_IN_HOURS = 48;
     private final Map<String, SavedMessage> articlesToMessages = new HashMap<>();
 
-    public Optional<Message> getArticleMessage(Article article) {
-        return Optional.ofNullable(articlesToMessages.get(article.link())).map(SavedMessage::message);
+    public Optional<SavedMessage> getArticleMessage(Article article) {
+        return Optional.ofNullable(articlesToMessages.get(article.link()));
     }
 
     public void addOrUpdateArticle(Article article, Message message) {
         articlesToMessages.put(
             article.link(),
-            new SavedMessage(message, DateTimeUtils.moscowTime())
+            new SavedMessage(message, article.toMessageText(), DateTimeUtils.moscowTime())
         );
     }
 

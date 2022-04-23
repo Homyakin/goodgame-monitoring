@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.homyakin.goodgame.monitoring.config.BotConfiguration;
 import ru.homyakin.goodgame.monitoring.models.Article;
 import ru.homyakin.goodgame.monitoring.models.EitherError;
+import ru.homyakin.goodgame.monitoring.models.SavedMessage;
 import ru.homyakin.goodgame.monitoring.utils.CommonUtils;
 
 @Component
@@ -43,27 +44,29 @@ public class ChannelController {
         }
     }
 
-    public Either<EitherError, Message> updateMessage(@NotNull Article article, @NotNull Message message) {
-        if (message.getCaption() != null) {
-            if (article.toMessageText().equals(message.getCaption())) {
-                return Either.right(message);
-            } else {
-                logger.info("Updating {} for new caption: {}", article.link(), article.toMessageText());
-                return bot.edit(TelegramMessageBuilder.createEditMessageCaptionFromArticle(message, article));
-            }
+    public Either<EitherError, Message> updateMessage(@NotNull Article article, @NotNull SavedMessage savedMessage) {
+        if (savedMessage.message().getCaption() != null) {
+            return updateMessageCaption(article, savedMessage);
         } else {
-            return updateTextMessage(article, message);
+            return updateTextMessage(article, savedMessage);
         }
-
     }
 
-    private Either<EitherError, Message> updateTextMessage(@NotNull Article article, @NotNull Message message) {
-        //TODO add photo
-        if (article.toMessageText().equals(message.getText())) {
-            return Either.right(message);
+    private Either<EitherError, Message> updateMessageCaption(@NotNull Article article, @NotNull SavedMessage savedMessage) {
+        if (article.toMessageText().equals(savedMessage.sentText())) {
+            return Either.right(savedMessage.message());
+        } else {
+            logger.info("Updating {} for new caption: {}", article.link(), article.toMessageText());
+            return bot.edit(TelegramMessageBuilder.createEditMessageCaptionFromArticle(savedMessage.message(), article));
+        }
+    }
+
+    private Either<EitherError, Message> updateTextMessage(@NotNull Article article, @NotNull SavedMessage savedMessage) {
+        if (article.toMessageText().equals(savedMessage.sentText())) {
+            return Either.right(savedMessage.message());
         } else {
             logger.info("Updating {} for new text: {}", article.link(), article.toMessageText());
-            return bot.edit(TelegramMessageBuilder.createEditMessageTextFromArticle(message, article));
+            return bot.edit(TelegramMessageBuilder.createEditMessageTextFromArticle(savedMessage.message(), article));
         }
     }
 }

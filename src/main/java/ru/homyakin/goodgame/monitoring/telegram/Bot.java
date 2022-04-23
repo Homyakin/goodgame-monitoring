@@ -15,6 +15,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.homyakin.goodgame.monitoring.config.BotConfiguration;
 import ru.homyakin.goodgame.monitoring.models.EitherError;
+import ru.homyakin.goodgame.monitoring.models.TelegramEditingError;
 import ru.homyakin.goodgame.monitoring.models.TelegramError;
 import ru.homyakin.goodgame.monitoring.utils.CommonUtils;
 
@@ -75,6 +76,9 @@ public class Bot extends TelegramLongPollingBot {
         try {
             return Either.right((Message) execute(message));
         } catch (TelegramApiException e) {
+            if (e.getMessage().contains(TelegramEditingError.TELEGRAM_ERROR_MESSAGE)) {
+                return Either.left(new TelegramEditingError("New caption was: " + message.getCaption()));
+            }
             logger.error("Something went wrong during editing message caption", e);
             return Either.left(new TelegramError("Unable to edit message caption\n" + CommonUtils.getStringStackTrace(e)));
         }
@@ -84,6 +88,9 @@ public class Bot extends TelegramLongPollingBot {
         try {
             return Either.right((Message) execute(message));
         } catch (TelegramApiException e) {
+            if (e.getMessage().contains(TelegramEditingError.TELEGRAM_ERROR_MESSAGE)) {
+                return Either.left(new TelegramEditingError("New text was: " + message.getText()));
+            }
             logger.error("Something went wrong during editing message text", e);
             return Either.left(new TelegramError("Unable to edit message text\n" + CommonUtils.getStringStackTrace(e)));
         }

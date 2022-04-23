@@ -11,6 +11,7 @@ import ru.homyakin.goodgame.monitoring.config.BotConfiguration;
 import ru.homyakin.goodgame.monitoring.models.Article;
 import ru.homyakin.goodgame.monitoring.models.EitherError;
 import ru.homyakin.goodgame.monitoring.models.SavedMessage;
+import ru.homyakin.goodgame.monitoring.models.TelegramEditingError;
 import ru.homyakin.goodgame.monitoring.utils.CommonUtils;
 
 @Component
@@ -45,28 +46,22 @@ public class ChannelController {
     }
 
     public Either<EitherError, Message> updateMessage(@NotNull Article article, @NotNull SavedMessage savedMessage) {
+        if (article.toMessageText().equals(savedMessage.sentText())) {
+            return Either.right(savedMessage.message());
+        }
+        final Either<EitherError, Message> result;
         if (savedMessage.message().getCaption() != null) {
-            return updateMessageCaption(article, savedMessage);
-        } else {
-            return updateTextMessage(article, savedMessage);
-        }
-    }
-
-    private Either<EitherError, Message> updateMessageCaption(@NotNull Article article, @NotNull SavedMessage savedMessage) {
-        if (article.toMessageText().equals(savedMessage.sentText())) {
-            return Either.right(savedMessage.message());
-        } else {
             logger.info("Updating {} for new caption: {}", article.link(), article.toMessageText());
-            return bot.edit(TelegramMessageBuilder.createEditMessageCaptionFromArticle(savedMessage.message(), article));
-        }
-    }
-
-    private Either<EitherError, Message> updateTextMessage(@NotNull Article article, @NotNull SavedMessage savedMessage) {
-        if (article.toMessageText().equals(savedMessage.sentText())) {
-            return Either.right(savedMessage.message());
+            result = bot.edit(TelegramMessageBuilder.createEditMessageCaptionFromArticle(savedMessage.message(), article));
         } else {
             logger.info("Updating {} for new text: {}", article.link(), article.toMessageText());
-            return bot.edit(TelegramMessageBuilder.createEditMessageTextFromArticle(savedMessage.message(), article));
+            result = bot.edit(TelegramMessageBuilder.createEditMessageTextFromArticle(savedMessage.message(), article));
         }
+        if (result.isLeft() && result.getLeft() instanceof TelegramEditingError) {
+            logger.error(
+                String.format("Error during editing old text %s to new %s", savedMessage.sentText(), article.toMessageText())
+            );
+        }
+        return result;
     }
 }

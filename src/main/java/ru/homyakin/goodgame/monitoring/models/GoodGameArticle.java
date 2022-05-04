@@ -3,6 +3,7 @@ package ru.homyakin.goodgame.monitoring.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 import javax.annotation.Nullable;
+import ru.homyakin.goodgame.monitoring.utils.CommonUtils;
 import ru.homyakin.goodgame.monitoring.utils.DateTimeUtils;
 
 public record GoodGameArticle(
@@ -63,10 +64,7 @@ public record GoodGameArticle(
 
         var text = "";
         if (update != null) {
-            var prettyUpdate = update
-                .replace("<p class=\"ng-scope\">", "")
-                .replace("<p>", "")
-                .replace("</p>", "")
+            var prettyUpdate = CommonUtils.removeHtmlElements(update)
                 .replace("\n\n", "\n");
             text = prettyUpdate;
             if (prettyUpdate.endsWith("\n")) {
@@ -111,9 +109,7 @@ record Description(
             text = "Обновление: " + update + "\n\n";
         }
         text += shortDescription;
-        return text
-            .replace("<p class=\"ng-scope\">", "")
-            .replace("</p>", "");
+        return CommonUtils.removeHtmlElements(text);
     }
 }
 

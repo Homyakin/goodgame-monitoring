@@ -9,4 +9,13 @@ public class CommonUtils {
         throwable.printStackTrace(new PrintWriter(sw));
         return sw.toString();
     }
+
+    public static String removeHtmlElements(String text) {
+        return text
+            .replace("<p class=\"ng-scope\">", "")
+            .replace("<p>", "")
+            .replace("</p>", "")
+            .replace("&nbsp;", " ")
+            ;
+    }
 }

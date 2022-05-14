@@ -2,6 +2,11 @@ package ru.homyakin.goodgame.monitoring.telegram;
 
 import io.vavr.control.Either;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,24 +14,26 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.homyakin.goodgame.monitoring.config.BotConfiguration;
 import ru.homyakin.goodgame.monitoring.models.Article;
+import ru.homyakin.goodgame.monitoring.models.ArticleInfo;
 import ru.homyakin.goodgame.monitoring.models.EitherError;
 import ru.homyakin.goodgame.monitoring.models.SavedMessage;
 import ru.homyakin.goodgame.monitoring.models.TelegramEditingError;
 import ru.homyakin.goodgame.monitoring.utils.CommonUtils;
+import ru.homyakin.goodgame.monitoring.utils.DateTimeUtils;
 
 @Component
 public class ChannelController {
     private static final Logger logger = LoggerFactory.getLogger(ChannelController.class);
-    private final Bot bot;
+    private final TelegramSender telegramSender;
     private final String channel;
     private final UserController userController;
 
     public ChannelController(
-        Bot bot,
+        TelegramSender telegramSender,
         BotConfiguration botConfiguration,
         UserController userController
     ) {
-        this.bot = bot;
+        this.telegramSender = telegramSender;
         this.channel = botConfiguration.getChannel();
         this.userController = userController;
     }
@@ -35,13 +42,13 @@ public class ChannelController {
         try {
             logger.info("Sending new article {}", article.link());
             return switch (article.getMediaType()) {
-                case IMAGE -> bot.send(TelegramMessageBuilder.creteSendPhotoFromArticle(article, channel));
-                case GIF -> bot.send(TelegramMessageBuilder.createSendAnimationFromArticle(article, channel));
+                case IMAGE -> telegramSender.send(TelegramMessageBuilder.creteSendPhotoFromArticle(article, channel));
+                case GIF -> telegramSender.send(TelegramMessageBuilder.createSendAnimationFromArticle(article, channel));
             };
         } catch (IOException e) {
             logger.error("Error during sending photo", e);
             userController.notifyAdmin("Error during sending photo\n" + CommonUtils.getStringStackTrace(e));
-            return bot.send(TelegramMessageBuilder.createSendMessageFromArticle(article, channel));
+            return telegramSender.send(TelegramMessageBuilder.createSendMessageFromArticle(article, channel));
         }
     }
 
@@ -52,10 +59,10 @@ public class ChannelController {
         final Either<EitherError, Message> result;
         if (savedMessage.message().getCaption() != null) {
             logger.info("Updating {} for new caption: {}", article.link(), article.toMessageText());
-            result = bot.edit(TelegramMessageBuilder.createEditMessageCaptionFromArticle(savedMessage.message(), article));
+            result = telegramSender.edit(TelegramMessageBuilder.createEditMessageCaptionFromArticle(savedMessage.message(), article));
         } else {
             logger.info("Updating {} for new text: {}", article.link(), article.toMessageText());
-            result = bot.edit(TelegramMessageBuilder.createEditMessageTextFromArticle(savedMessage.message(), article));
+            result = telegramSender.edit(TelegramMessageBuilder.createEditMessageTextFromArticle(savedMessage.message(), article));
         }
         if (result.isLeft() && result.getLeft() instanceof TelegramEditingError) {
             logger.error(
@@ -63,5 +70,28 @@ public class ChannelController {
             );
         }
         return result;
+    }
+
+    public void sendArticles(List<ArticleInfo> articleInfos, long startDate, long endDate) {
+
+        var start = DateTimeUtils.longToMoscowDateTime(startDate);
+        var end = DateTimeUtils.longToMoscowDateTime(endDate).minus(1, ChronoUnit.DAYS);
+        var formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        StringBuilder text = new StringBuilder(String.format(
+            "Топ %d новостей с %s по %s:\n\n",
+            articleInfos.size(),
+            start.format(formatter),
+            end.format(formatter)
+        ));
+
+        for (int i = 0; i < articleInfos.size(); ++i) {
+            text.append(i + 1).append(") ").append(articleInfos.get(i).toTelegramText()).append("\n");
+        }
+
+        var result = telegramSender.send(TelegramMessageBuilder.createSendMessageWithHtmlParseMode(text.toString(), channel));
+
+        if (result.isLeft()) {
+            userController.notifyAdmin(result.getLeft().getMessage());
+        }
     }
 }

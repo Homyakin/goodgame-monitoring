@@ -7,6 +7,7 @@ public record Article(
     @NotNull String title,
     @NotNull String text,
     @NotNull String link,
+    long id,
     long date,
     boolean isTournament
 ) {

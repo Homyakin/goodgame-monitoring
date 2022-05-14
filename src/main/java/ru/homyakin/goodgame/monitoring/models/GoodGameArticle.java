@@ -27,6 +27,7 @@ public record GoodGameArticle(
             getTitle(),
             getText(),
             getLink(),
+            key != null ? Long.parseLong(key) : Long.parseLong(id),
             date,
             isTournament()
         );

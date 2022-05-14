@@ -9,16 +9,16 @@ import ru.homyakin.goodgame.monitoring.config.BotConfiguration;
 @Component
 public class UserController {
     private final static Logger logger = LoggerFactory.getLogger(UserController.class);
-    private final Bot bot;
+    private final TelegramSender telegramSender;
     private final Long adminId;
 
-    public UserController(Bot bot, BotConfiguration configuration) {
-        this.bot = bot;
+    public UserController(TelegramSender telegramSender, BotConfiguration configuration) {
+        this.telegramSender = telegramSender;
         this.adminId = configuration.getAdminId();
     }
 
     public void notifyAdmin(@NotNull String text) {
         logger.info("Sending message to admin");
-        bot.send(TelegramMessageBuilder.createSendMessage(text, adminId.toString()));
+        telegramSender.send(TelegramMessageBuilder.createSendMessage(text, adminId.toString()));
     }
 }

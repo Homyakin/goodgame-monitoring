@@ -6,14 +6,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
-import ru.homyakin.goodgame.monitoring.telegram.Bot;
+import ru.homyakin.goodgame.monitoring.telegram.TelegramUpdateReceiver;
 
 @SpringBootApplication
 @EnableScheduling
 public class Application implements CommandLineRunner {
-    private final Bot bot;
+    private final TelegramUpdateReceiver bot;
 
-    public Application(Bot bot) {
+    public Application(TelegramUpdateReceiver bot) {
         this.bot = bot;
     }
 

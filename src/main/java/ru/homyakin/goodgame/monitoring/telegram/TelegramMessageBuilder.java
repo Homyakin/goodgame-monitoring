@@ -66,6 +66,15 @@ public class TelegramMessageBuilder {
             .build();
     }
 
+    public static SendMessage createSendMessageWithHtmlParseMode(@NotNull String text, @NotNull String chatId) {
+        return SendMessage.builder()
+            .chatId(chatId)
+            .disableWebPagePreview(true)
+            .text(substringToTelegramLength(text))
+            .parseMode(ParseMode.HTML)
+            .build();
+    }
+
     public static SendPhoto creteSendPhotoFromArticle(@NotNull Article article, @NotNull String chatId) throws IOException {
         return SendPhoto
             .builder()

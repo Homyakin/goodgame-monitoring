@@ -4,14 +4,14 @@ import io.vavr.control.Either;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.bots.DefaultAbsSender;
+import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageCaption;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.homyakin.goodgame.monitoring.config.BotConfiguration;
 import ru.homyakin.goodgame.monitoring.models.EitherError;
@@ -20,29 +20,13 @@ import ru.homyakin.goodgame.monitoring.models.TelegramError;
 import ru.homyakin.goodgame.monitoring.utils.CommonUtils;
 
 @Component
-public class Bot extends TelegramLongPollingBot {
-    private static final Logger logger = LoggerFactory.getLogger(Bot.class);
+public class TelegramSender extends DefaultAbsSender {
+    private static final Logger logger = LoggerFactory.getLogger(TelegramSender.class);
     private final String token;
-    private final String username;
-    private final Long adminId;
 
-    public Bot(BotConfiguration configuration) {
-        token = configuration.getToken();
-        username = configuration.getUsername();
-        adminId = configuration.getAdminId();
-    }
-
-
-    @Override
-    public void onUpdateReceived(Update update) {
-        if (update.hasMessage()) {
-            if (update.getMessage().isUserMessage()) {
-                if (update.getMessage().getChatId().equals(adminId)) {
-                    final var message = TelegramMessageBuilder.createSendMessage("OK", adminId.toString());
-                    send(message);
-                }
-            }
-        }
+    protected TelegramSender(BotConfiguration botConfig, DefaultBotOptions options) {
+        super(options);
+        this.token = botConfig.getToken();
     }
 
     public Either<EitherError, Message> send(SendMessage message) {
@@ -94,11 +78,6 @@ public class Bot extends TelegramLongPollingBot {
             logger.error("Something went wrong during editing message text", e);
             return Either.left(new TelegramError("Unable to edit message text\n" + CommonUtils.getStringStackTrace(e)));
         }
-    }
-
-    @Override
-    public String getBotUsername() {
-        return username;
     }
 
     @Override

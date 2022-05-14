@@ -1,7 +1,9 @@
 package ru.homyakin.goodgame.monitoring.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.telegram.telegrambots.bots.DefaultBotOptions;
 
 @Configuration
 @ConfigurationProperties(prefix = "ru.homyakin.telegram.bot")
@@ -10,6 +12,11 @@ public class BotConfiguration {
     private String username;
     private String token;
     private String channel;
+
+    @Bean
+    public DefaultBotOptions createBotOptions() {
+        return new DefaultBotOptions();
+    }
 
     public Long getAdminId() {
         return adminId;

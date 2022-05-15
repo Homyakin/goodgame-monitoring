@@ -76,6 +76,7 @@ public class ArticleMonitoring {
     @Scheduled(cron = "0 0 12 * * 6", zone = "Europe/Moscow")
     public void findTopWeekArticles() {
         // Хотим топ новостей с прошлой субботы по текущую пятницу
+        logger.info("Start searching top week articles");
         final var startDate = DateTimeUtils.getPreviousSaturdayTime();
         final var endDate = DateTimeUtils.getCloseSaturdayTime();
 

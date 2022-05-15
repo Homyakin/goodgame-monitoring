@@ -4,7 +4,6 @@ package ru.homyakin.goodgame.monitoring.service.parser;
 import io.vavr.control.Either;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
@@ -19,6 +18,7 @@ import ru.homyakin.goodgame.monitoring.models.ArticleInfo;
 import ru.homyakin.goodgame.monitoring.models.EitherError;
 import ru.homyakin.goodgame.monitoring.models.ParserError;
 import ru.homyakin.goodgame.monitoring.utils.CommonUtils;
+import ru.homyakin.goodgame.monitoring.utils.DateTimeUtils;
 
 public class ArticleInfoParser {
     private static final Logger logger = LoggerFactory.getLogger(ArticleInfoParser.class);
@@ -55,6 +55,6 @@ public class ArticleInfoParser {
             .parseDefaulting(ChronoField.YEAR, Calendar.getInstance().get(Calendar.YEAR))
             .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
             .toFormatter(new Locale("ru"));
-        return LocalDateTime.parse(dateString, parsingFormatter).toEpochSecond(ZoneOffset.ofHours(3));
+        return LocalDateTime.parse(dateString, parsingFormatter).atZone(DateTimeUtils.moscowZone()).toEpochSecond();
     }
 }

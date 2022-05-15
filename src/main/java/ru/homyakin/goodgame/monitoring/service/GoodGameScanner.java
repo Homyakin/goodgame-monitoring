@@ -61,7 +61,7 @@ public class GoodGameScanner {
             .GET()
             .build();
         return sendRequest(articleInfoRequest)
-            .flatMap(response -> ArticleInfoParser.parseBody(response.body(), link));
+            .flatMap(response -> ArticleInfoParser.parseBody(response.body()));
     }
 
     private Either<EitherError, HttpResponse<String>> sendRequest(HttpRequest request) {

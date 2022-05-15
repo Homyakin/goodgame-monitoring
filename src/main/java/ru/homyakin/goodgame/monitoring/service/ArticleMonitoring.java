@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ru.homyakin.goodgame.monitoring.models.ArticleInfo;
-import ru.homyakin.goodgame.monitoring.service.parser.ArticleInfoParser;
 import ru.homyakin.goodgame.monitoring.telegram.ChannelController;
 import ru.homyakin.goodgame.monitoring.telegram.UserController;
 import ru.homyakin.goodgame.monitoring.utils.DateTimeUtils;
@@ -65,8 +64,8 @@ public class ArticleMonitoring {
     public void findTopWeekArticles() {
         // Хотим топ новостей с прошлой субботы по текущую пятницу
         logger.info("Start searching top week articles");
-        final var startDate = DateTimeUtils.getPreviousSaturdayTime();
-        final var endDate = DateTimeUtils.getCloseSaturdayTime();
+        final var startDate = DateTimeUtils.getSaturdayAtPreviousWeekTime();
+        final var endDate = DateTimeUtils.getSaturdayAtThisWeekTime();
 
         final var result = scanner.getLastArticle();
         if (result.isLeft()) {

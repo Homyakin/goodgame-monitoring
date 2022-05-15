@@ -23,7 +23,7 @@ public class DateTimeUtils {
         return Instant.ofEpochSecond(time).atZone(moscowZone()).toLocalDateTime();
     }
 
-    public static long getPreviousSaturdayTime() {
+    public static long getSaturdayAtPreviousWeekTime() {
         var today = LocalDate.now();
         return today
             .minus(today.getDayOfWeek().getValue() - DayOfWeek.SATURDAY.getValue() + 7, ChronoUnit.DAYS)
@@ -31,7 +31,7 @@ public class DateTimeUtils {
             .toEpochSecond();
     }
 
-    public static long getCloseSaturdayTime() {
+    public static long getSaturdayAtThisWeekTime() {
         var today = LocalDate.now();
         return today
             .minus(today.getDayOfWeek().getValue() - DayOfWeek.SATURDAY.getValue(), ChronoUnit.DAYS)

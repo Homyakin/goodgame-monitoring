@@ -13,14 +13,12 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import ru.homyakin.goodgame.monitoring.models.Article;
 import ru.homyakin.goodgame.monitoring.models.EitherError;
 import ru.homyakin.goodgame.monitoring.models.GoodGameArticle;
 import ru.homyakin.goodgame.monitoring.models.ParserError;
 import ru.homyakin.goodgame.monitoring.utils.CommonUtils;
 
-@Component
 public class ArticleParser {
     private final static Logger logger = LoggerFactory.getLogger(ArticleParser.class);
     private final static Pattern jsonStart = Pattern.compile("\\[\\{");
@@ -29,7 +27,7 @@ public class ArticleParser {
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         .build();
 
-    public Either<EitherError, List<Article>> parseContent(String html) {
+    public static Either<EitherError, List<Article>> parseContent(String html) {
         final var json = getArticlesJsonFromHtml(html);
         try {
             return Either.right(
@@ -43,7 +41,7 @@ public class ArticleParser {
         }
     }
 
-    private String getArticlesJsonFromHtml(String html) {
+    private static String getArticlesJsonFromHtml(String html) {
         final var doc = Jsoup.parse(html);
         final var function = doc.getElementsByClass("news-block")
             .get(0)

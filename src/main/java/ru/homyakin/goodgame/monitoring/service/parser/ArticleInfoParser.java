@@ -1,6 +1,7 @@
 package ru.homyakin.goodgame.monitoring.service.parser;
 
 
+import io.vavr.control.Either;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -18,18 +19,21 @@ import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.homyakin.goodgame.monitoring.models.ArticleInfo;
+import ru.homyakin.goodgame.monitoring.models.EitherError;
+import ru.homyakin.goodgame.monitoring.models.ParserError;
+import ru.homyakin.goodgame.monitoring.utils.CommonUtils;
 
 public class ArticleInfoParser {
     private static final Logger logger = LoggerFactory.getLogger(ArticleInfoParser.class);
 
-    public static Optional<ArticleInfo> parseBody(String body, String link) {
+    public static Either<EitherError, ArticleInfo> parseBody(String body, String link) {
         final var doc = Jsoup.parse(body);
         try {
             final var date = parseDate(doc);
             final var views = Long.parseLong(doc.getElementsByClass("news__views").get(0).text());
             final var comments = doc.getElementsByClass("news__comments").get(0).text();
             final var title = doc.getElementsByClass("news-title").get(0).text();
-            return Optional.of(new ArticleInfo(
+            return Either.right(new ArticleInfo(
                 title,
                 link,
                 comments,
@@ -38,7 +42,7 @@ public class ArticleInfoParser {
             ));
         } catch (Exception e) {
             logger.error("Error parsing", e);
-            return Optional.empty();
+            return Either.left(new ParserError("Error parsing " + CommonUtils.getStringStackTrace(e)));
         }
     }
 

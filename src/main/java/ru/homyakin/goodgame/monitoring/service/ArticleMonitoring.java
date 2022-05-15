@@ -73,7 +73,7 @@ public class ArticleMonitoring {
         logger.info("Finish monitoring " + monitoringUuid);
     }
 
-    @Scheduled(cron = "0 0 12 * * 6", zone = "Europe/Moscow")
+    @Scheduled(cron = "0 0 12 * * 7", zone = "Europe/Moscow")
     public void findTopWeekArticles() {
         // Хотим топ новостей с прошлой субботы по текущую пятницу
         logger.info("Start searching top week articles");

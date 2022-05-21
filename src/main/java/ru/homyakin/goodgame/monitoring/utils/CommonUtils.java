@@ -17,6 +17,7 @@ public class CommonUtils {
             .replace("</p>", "")
             .replace("&nbsp;", " ")
             .replace("<br>", "\n")
+            .replace("<br />", "\n")
             ;
     }
 }

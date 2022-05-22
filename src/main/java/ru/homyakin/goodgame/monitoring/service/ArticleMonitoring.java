@@ -92,8 +92,23 @@ public class ArticleMonitoring {
                 ++oldArticles;
             }
         }
+        weekArticles.forEach(it ->
+            logger.debug(
+                "link:%s, date: %s, views: %d, comm: %s, pop: %d%n".formatted(
+                    it.link(),
+                    Instant.ofEpochSecond(it.date()).toString(),
+                    it.views(),
+                    it.comments(),
+                    it.calculatePopularity(startDate)
+                )
+            )
+        );
         channelController.sendArticles(
-            weekArticles.stream().sorted((a, b) -> Long.compare(b.views(), a.views())).limit(5).toList(),
+            weekArticles
+                .stream()
+                .sorted((a, b) -> Long.compare(b.calculatePopularity(startDate), a.calculatePopularity(startDate)))
+                .limit(5)
+                .toList(),
             startDate,
             endDate
         );

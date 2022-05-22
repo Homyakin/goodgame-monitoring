@@ -7,6 +7,12 @@ public record ArticleInfo(
     long date,
     long views
 ) {
+    public long calculatePopularity(long initDate) {
+        final long commentsCount = Long.parseLong(comments.split(" ")[0]);
+        final long passedHours = (date - initDate) / 3600;
+        return passedHours * 30 + commentsCount * 50 + views;
+    }
+
     public String toTelegramText() {
         return String.format(
             """

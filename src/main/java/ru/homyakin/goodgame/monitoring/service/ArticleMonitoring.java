@@ -73,9 +73,12 @@ public class ArticleMonitoring {
             return;
         }
         long id = result.get().id();
-        ArticleInfo articleInfo = null;
+        ArticleInfo articleInfo;
         final var weekArticles = new ArrayList<ArticleInfo>();
-        while (articleInfo == null || articleInfo.date() >= startDate) {
+        int oldArticles = 0;
+        // Иногда бывает, что новость с большим id опубликована раньше, чем новость с меньшим, поэтому убеждаемся,
+        // что 2 подряд новости старые
+        while (oldArticles < 2) {
             var response = scanner.getArticleInfoById(String.valueOf(id));
             --id;
             if (response.isLeft()) {
@@ -84,6 +87,9 @@ public class ArticleMonitoring {
             articleInfo = response.get();
             if (articleInfo.date() < endDate && articleInfo.date() >= startDate) {
                 weekArticles.add(articleInfo);
+                oldArticles = 0;
+            } else if (articleInfo.date() < endDate) {
+                ++oldArticles;
             }
         }
         channelController.sendArticles(

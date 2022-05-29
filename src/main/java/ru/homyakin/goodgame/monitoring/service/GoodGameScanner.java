@@ -35,12 +35,12 @@ public class GoodGameScanner {
             .build();
     }
 
-    public Either<EitherError, Article> getLastArticle() {
+    public Either<EitherError, Article> getArticleWithBiggestId() {
         return getLastArticles()
             .map(articles -> articles
                 .stream()
                 .filter(article -> !article.isTournament())
-                .max(Comparator.comparingLong(Article::date))
+                .max(Comparator.comparingLong(Article::id))
             ).flatMap(
                 article -> article
                     .map(Either::<EitherError, Article>right)

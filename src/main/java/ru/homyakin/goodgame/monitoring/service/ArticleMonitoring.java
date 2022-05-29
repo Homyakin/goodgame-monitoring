@@ -66,8 +66,7 @@ public class ArticleMonitoring {
         logger.info("Start searching top week articles");
         final var startDate = DateTimeUtils.getSaturdayAtPreviousWeekTime();
         final var endDate = DateTimeUtils.getSaturdayAtThisWeekTime();
-
-        final var result = scanner.getLastArticle();
+        final var result = scanner.getArticleWithBiggestId();
         if (result.isLeft()) {
             userController.notifyAdmin(result.getLeft().getMessage());
             return;
@@ -77,8 +76,8 @@ public class ArticleMonitoring {
         final var weekArticles = new ArrayList<ArticleInfo>();
         int oldArticles = 0;
         // Иногда бывает, что новость с большим id опубликована раньше, чем новость с меньшим, поэтому убеждаемся,
-        // что 2 подряд новости старые
-        while (oldArticles < 2) {
+        // что 20 новостей подряд старые (максимальный случай)
+        while (oldArticles < 20) {
             var response = scanner.getArticleInfoById(String.valueOf(id));
             --id;
             if (response.isLeft()) {
@@ -88,7 +87,7 @@ public class ArticleMonitoring {
             if (articleInfo.date() < endDate && articleInfo.date() >= startDate) {
                 weekArticles.add(articleInfo);
                 oldArticles = 0;
-            } else if (articleInfo.date() < endDate) {
+            } else if (articleInfo.date() < startDate) {
                 ++oldArticles;
             }
         }

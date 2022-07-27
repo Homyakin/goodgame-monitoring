@@ -18,6 +18,10 @@ public class CommonUtils {
             .replace("&nbsp;", " ")
             .replace("<br>", "\n")
             .replace("<br />", "\n")
+            .replace("<div>", "")
+            .replace("</div>", "")
+            .replace("<span>", "")
+            .replace("</span>", "")
             ;
     }
 }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.vavr.control.Either;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jsoup.Jsoup;
@@ -30,8 +31,16 @@ public class ArticleParser {
         try {
             return Either.right(
                 Arrays.stream(objectMapper.readValue(json, GoodGameArticle[].class))
-                .map(GoodGameArticle::toArticle)
-                .toList()
+                    .map(it -> {
+                        try {
+                            return it.toArticle();
+                        } catch (Exception e) {
+                            logger.error("Unable to map article", e);
+                            return null;
+                        }
+                    })
+                    .filter(Objects::nonNull)
+                    .toList()
             );
         } catch (Exception e) {
             logger.error("Unable to parse content", e);

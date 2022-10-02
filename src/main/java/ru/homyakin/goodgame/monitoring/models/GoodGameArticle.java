@@ -12,7 +12,7 @@ public record GoodGameArticle(
     @Nullable String key, // только для новостей -> https://goodgame.ru/news/<key>
     String logo,
     @Nullable String title, // только для турниров
-    @Nullable Game game, // только для турниров
+    @Nullable Game game, // только для турниров и то не всегда
     @Nullable Long start, // только для турниров
     @JsonProperty("prize_fund")
     @Nullable String prizeFund, // только для турниров
@@ -58,7 +58,6 @@ public record GoodGameArticle(
     }
 
     private String getTournamentText() {
-        Objects.requireNonNull(game);
         Objects.requireNonNull(start);
         Objects.requireNonNull(prizeFund);
         Objects.requireNonNull(participants);
@@ -73,9 +72,10 @@ public record GoodGameArticle(
             } else {
                 text += "\n\n";
             }
-
         }
-        text += "Игра: " + game.title() + "\n";
+        if (game != null) {
+            text += "Игра: " + game.title() + "\n";
+        }
         text += "Призовой фонд: " + prizeFund + "\n";
         text += "Участники: " + participants + "\n";
         text += "Начало турнира: " + DateTimeUtils.longToTimeString(start);

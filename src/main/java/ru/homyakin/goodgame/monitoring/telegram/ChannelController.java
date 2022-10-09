@@ -2,8 +2,6 @@ package ru.homyakin.goodgame.monitoring.telegram;
 
 import io.vavr.control.Either;
 import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -14,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.homyakin.goodgame.monitoring.config.BotConfiguration;
 import ru.homyakin.goodgame.monitoring.models.Article;
+import ru.homyakin.goodgame.monitoring.models.ApiArticle;
 import ru.homyakin.goodgame.monitoring.models.ArticleInfo;
 import ru.homyakin.goodgame.monitoring.models.EitherError;
 import ru.homyakin.goodgame.monitoring.models.SavedMessage;

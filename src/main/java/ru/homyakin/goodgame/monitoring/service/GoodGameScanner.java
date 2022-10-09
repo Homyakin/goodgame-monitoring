@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.homyakin.goodgame.monitoring.models.Article;
+import ru.homyakin.goodgame.monitoring.models.ApiArticle;
 import ru.homyakin.goodgame.monitoring.models.ArticleInfo;
 import ru.homyakin.goodgame.monitoring.models.EitherError;
 import ru.homyakin.goodgame.monitoring.models.HttpError;
@@ -54,14 +55,28 @@ public class GoodGameScanner {
     }
 
     public Either<EitherError, ArticleInfo> getArticleInfoById(String id) {
-        final var link = "https://goodgame.ru/news/" + id;
+        final var link = "https://goodgame.ru/api/4/news/" + id;
         logger.info("Getting page " + link);
         final var articleInfoRequest = HttpRequest.newBuilder()
             .uri(URI.create(link))
             .GET()
             .build();
         return sendRequest(articleInfoRequest)
-            .flatMap(response -> ArticleInfoParser.parseBody(response.body()));
+            .flatMap(ArticleInfoParser::parseApiResponse)
+            .flatMap(apiArticle ->
+                    getCommentsByArticleId(apiArticle.id())
+                        .flatMap(ArticleInfoParser::parseApiComments)
+                        .map(apiArticle::toArticleInfo)
+            );
+    }
+
+    private Either<EitherError, HttpResponse<String>> getCommentsByArticleId(Long id) {
+        final var link = "https://goodgame.ru/api/4/comments?objId=%d&objType=1".formatted(id);
+        final var articleInfoRequest = HttpRequest.newBuilder()
+            .uri(URI.create(link))
+            .GET()
+            .build();
+        return sendRequest(articleInfoRequest);
     }
 
     private Either<EitherError, HttpResponse<String>> sendRequest(HttpRequest request) {

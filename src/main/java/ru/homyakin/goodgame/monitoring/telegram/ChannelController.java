@@ -17,6 +17,7 @@ import ru.homyakin.goodgame.monitoring.models.ArticleInfo;
 import ru.homyakin.goodgame.monitoring.models.EitherError;
 import ru.homyakin.goodgame.monitoring.models.SavedMessage;
 import ru.homyakin.goodgame.monitoring.models.TelegramEditingError;
+import ru.homyakin.goodgame.monitoring.models.TelegramError;
 import ru.homyakin.goodgame.monitoring.utils.CommonUtils;
 import ru.homyakin.goodgame.monitoring.utils.DateTimeUtils;
 
@@ -45,9 +46,13 @@ public class ChannelController {
                 case GIF -> telegramSender.send(TelegramMessageBuilder.createSendAnimationFromArticle(article, channel));
             };
         } catch (IOException e) {
-            logger.error("Error during sending photo", e);
-            userController.notifyAdmin("Error during sending photo\n" + CommonUtils.getStringStackTrace(e));
-            return telegramSender.send(TelegramMessageBuilder.createSendMessageFromArticle(article, channel));
+            if (article.isTournament()) {
+                return Either.left(new TelegramError("Error sending photo to tournament " + article.link()));
+            } else {
+                logger.error("Error during sending photo", e);
+                userController.notifyAdmin("Error during sending photo\n" + CommonUtils.getStringStackTrace(e));
+                return telegramSender.send(TelegramMessageBuilder.createSendMessageFromArticle(article, channel));
+            }
         }
     }
 

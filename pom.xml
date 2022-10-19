@@ -11,7 +11,7 @@
     <properties>
         <java.version>18</java.version>
         <spring.version>2.6.7</spring.version>
-        <jackson.version>2.13.3</jackson.version>
+        <jackson.version>2.13.4.1</jackson.version>
         <junit.version>5.8.2</junit.version>
         <start-class>ru.homyakin.goodgame.monitoring.Application</start-class>
     </properties>

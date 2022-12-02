@@ -22,6 +22,7 @@ public class CommonUtils {
             .replace("</div>", "")
             .replace("<span>", "")
             .replace("</span>", "")
+            .replace("<div class=\"ng-scope\">", "")
             ;
     }
 }

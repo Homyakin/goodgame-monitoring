@@ -8,7 +8,7 @@ public record ArticleInfo(
     long views
 ) {
     public long calculatePopularity(long initDate) {
-        final long passedHours = (date - initDate) / 3600;
+        final long passedHours = Math.min((date - initDate) / 3600, 336);
         return passedHours * 30 + comments * 50 + views;
     }
 

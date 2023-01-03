@@ -65,6 +65,7 @@ public record GoodGameArticle(
         var text = "";
         if (update != null) {
             var prettyUpdate = CommonUtils.removeHtmlElements(update)
+                .trim()
                 .replace("\n\n", "\n");
             text = prettyUpdate;
             if (prettyUpdate.endsWith("\n")) {
@@ -110,7 +111,8 @@ record Description(
             text = "Обновление: " + update + "\n\n";
         }
         text += shortDescription;
-        return CommonUtils.removeHtmlElements(text);
+        return CommonUtils.removeHtmlElements(text)
+            .trim();
     }
 }
 

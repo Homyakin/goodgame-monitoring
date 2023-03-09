@@ -35,6 +35,15 @@ public record Article(
         return s + link;
     }
 
+    public String toMessageText(int maxLength) {
+        var s = toMessageText();
+        if (s.length() > maxLength) {
+            s = title + "\n\n" + text.substring(0, text.length() - (s.length() - maxLength + 5)) + "...";
+            s += "\n\n" + link;
+        }
+        return s;
+    }
+
     public enum MediaType {
         GIF,
         IMAGE

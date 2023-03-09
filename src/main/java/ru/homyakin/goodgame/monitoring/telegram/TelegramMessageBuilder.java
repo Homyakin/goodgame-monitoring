@@ -17,12 +17,13 @@ import ru.homyakin.goodgame.monitoring.models.Article;
 @Component
 public class TelegramMessageBuilder {
     private final static int MAX_TELEGRAM_MESSAGE = 4000;
+    private final static int CAPTION_MAX_LENGTH = 1024;
 
     public static SendAnimation createSendAnimationFromArticle(@NotNull Article article, @NotNull String chatId) throws IOException {
         return SendAnimation
             .builder()
             .chatId(chatId)
-            .caption(substringToTelegramLength(article.toMessageText()))
+            .caption(substringToTelegramLength(article.toMessageText(CAPTION_MAX_LENGTH)))
             .animation(new InputFile(article.mediaLink()))
             .parseMode(ParseMode.HTML)
             .build();
@@ -33,7 +34,7 @@ public class TelegramMessageBuilder {
             .builder()
             .chatId(message.getChatId().toString())
             .messageId(message.getMessageId())
-            .caption(substringToTelegramLength(article.toMessageText()))
+            .caption(substringToTelegramLength(article.toMessageText(CAPTION_MAX_LENGTH)))
             .parseMode(ParseMode.HTML)
             .build();
     }
@@ -80,7 +81,7 @@ public class TelegramMessageBuilder {
             .builder()
             .photo(new InputFile(new URL(article.mediaLink()).openStream(), article.link()))
             .chatId(chatId)
-            .caption(substringToTelegramLength(article.toMessageText()))
+            .caption(substringToTelegramLength(article.toMessageText(CAPTION_MAX_LENGTH)))
             .parseMode(ParseMode.HTML)
             .build();
     }

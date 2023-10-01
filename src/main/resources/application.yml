@@ -13,3 +13,6 @@ ru:
         token: "stab"
         username: "stab"
         channel: "@goodgame_monitoring"
+
+logging.level:
+  ru.homyakin: debug

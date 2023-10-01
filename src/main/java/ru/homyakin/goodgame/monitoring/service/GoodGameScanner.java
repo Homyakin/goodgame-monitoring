@@ -81,7 +81,9 @@ public class GoodGameScanner {
 
     private Either<EitherError, HttpResponse<String>> sendRequest(HttpRequest request) {
         try {
+            logger.debug("Sending request to {}", request.uri().toString());
             final var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            logger.debug("Get response with code " + response.statusCode());
             if (response.statusCode() != HttpURLConnection.HTTP_OK) {
                 logger.error("Http code is not ok: {}", response.statusCode());
                 return Either.left(new HttpError("Http code is not ok: " + response.statusCode()));

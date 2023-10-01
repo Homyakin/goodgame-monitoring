@@ -2,7 +2,8 @@ package ru.homyakin.goodgame.monitoring.telegram;
 
 import java.io.IOException;
 import java.net.URL;
-import javax.validation.constraints.NotNull;
+
+import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
@@ -19,7 +20,7 @@ public class TelegramMessageBuilder {
     private final static int MAX_TELEGRAM_MESSAGE = 4000;
     private final static int CAPTION_MAX_LENGTH = 1024;
 
-    public static SendAnimation createSendAnimationFromArticle(@NotNull Article article, @NotNull String chatId) throws IOException {
+    public static SendAnimation createSendAnimationFromArticle(@Nonnull Article article, @Nonnull String chatId) throws IOException {
         return SendAnimation
             .builder()
             .chatId(chatId)
@@ -29,7 +30,7 @@ public class TelegramMessageBuilder {
             .build();
     }
 
-    public static EditMessageCaption createEditMessageCaptionFromArticle(@NotNull Message message, @NotNull Article article) {
+    public static EditMessageCaption createEditMessageCaptionFromArticle(@Nonnull Message message, @Nonnull Article article) {
         return EditMessageCaption
             .builder()
             .chatId(message.getChatId().toString())
@@ -39,7 +40,7 @@ public class TelegramMessageBuilder {
             .build();
     }
 
-    public static EditMessageText createEditMessageTextFromArticle(@NotNull Message message, @NotNull Article article) {
+    public static EditMessageText createEditMessageTextFromArticle(@Nonnull Message message, @Nonnull Article article) {
         return EditMessageText
             .builder()
             .chatId(message.getChatId().toString())
@@ -50,7 +51,7 @@ public class TelegramMessageBuilder {
             .build();
     }
 
-    public static SendMessage createSendMessageFromArticle(@NotNull Article article, @NotNull String chatId) {
+    public static SendMessage createSendMessageFromArticle(@Nonnull Article article, @Nonnull String chatId) {
         return SendMessage.builder()
             .chatId(chatId)
             .disableWebPagePreview(true)
@@ -59,7 +60,7 @@ public class TelegramMessageBuilder {
             .build();
     }
 
-    public static SendMessage createSendMessage(@NotNull String text, @NotNull String chatId) {
+    public static SendMessage createSendMessage(@Nonnull String text, @Nonnull String chatId) {
         return SendMessage.builder()
             .chatId(chatId)
             .disableWebPagePreview(true)
@@ -67,7 +68,7 @@ public class TelegramMessageBuilder {
             .build();
     }
 
-    public static SendMessage createSendMessageWithHtmlParseMode(@NotNull String text, @NotNull String chatId) {
+    public static SendMessage createSendMessageWithHtmlParseMode(@Nonnull String text, @Nonnull String chatId) {
         return SendMessage.builder()
             .chatId(chatId)
             .disableWebPagePreview(true)
@@ -76,7 +77,7 @@ public class TelegramMessageBuilder {
             .build();
     }
 
-    public static SendPhoto creteSendPhotoFromArticle(@NotNull Article article, @NotNull String chatId) throws IOException {
+    public static SendPhoto creteSendPhotoFromArticle(@Nonnull Article article, @Nonnull String chatId) throws IOException {
         return SendPhoto
             .builder()
             .photo(new InputFile(new URL(article.mediaLink()).openStream(), article.link()))

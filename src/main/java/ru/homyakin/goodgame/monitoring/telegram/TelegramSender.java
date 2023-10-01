@@ -22,11 +22,9 @@ import ru.homyakin.goodgame.monitoring.utils.CommonUtils;
 @Component
 public class TelegramSender extends DefaultAbsSender {
     private static final Logger logger = LoggerFactory.getLogger(TelegramSender.class);
-    private final String token;
 
     protected TelegramSender(BotConfiguration botConfig, DefaultBotOptions options) {
-        super(options);
-        this.token = botConfig.getToken();
+        super(options, botConfig.getToken());
     }
 
     public Either<EitherError, Message> send(SendMessage message) {
@@ -78,10 +76,5 @@ public class TelegramSender extends DefaultAbsSender {
             logger.error("Something went wrong during editing message text", e);
             return Either.left(new TelegramError("Unable to edit message text\n" + CommonUtils.getStringStackTrace(e)));
         }
-    }
-
-    @Override
-    public String getBotToken() {
-        return token;
     }
 }

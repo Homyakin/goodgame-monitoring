@@ -9,10 +9,11 @@
     <version>0.6.0</version>
 
     <properties>
-        <java.version>18</java.version>
-        <spring.version>2.6.7</spring.version>
-        <jackson.version>2.14.2</jackson.version>
+        <java.version>21</java.version>
+        <spring.version>3.1.4</spring.version>
+        <jackson.version>2.15.2</jackson.version>
         <junit.version>5.8.2</junit.version>
+        <telegrambots.version>6.8.0</telegrambots.version>
         <start-class>ru.homyakin.goodgame.monitoring.Application</start-class>
     </properties>
 
@@ -39,7 +40,13 @@
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots</artifactId>
-            <version>6.0.1</version>
+            <version>${telegrambots.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.module</groupId>
+                    <artifactId>jackson-module-jaxb-annotations</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- https://mvnrepository.com/artifact/io.vavr/vavr -->
         <dependency>

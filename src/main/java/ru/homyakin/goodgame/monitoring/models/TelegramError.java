@@ -1,9 +1,9 @@
 package ru.homyakin.goodgame.monitoring.models;
 
-import javax.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 
 public class TelegramError extends EitherError {
-    public TelegramError(@NotNull String message) {
+    public TelegramError(@Nonnull String message) {
         super(message);
     }
 }

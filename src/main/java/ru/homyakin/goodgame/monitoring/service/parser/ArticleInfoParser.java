@@ -10,9 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.homyakin.goodgame.monitoring.models.ApiArticle;
 import ru.homyakin.goodgame.monitoring.models.ApiComments;
-import ru.homyakin.goodgame.monitoring.models.ArticleInfo;
 import ru.homyakin.goodgame.monitoring.models.EitherError;
-import ru.homyakin.goodgame.monitoring.models.GoodGameArticle;
 import ru.homyakin.goodgame.monitoring.models.ParserError;
 import ru.homyakin.goodgame.monitoring.utils.CommonUtils;
 

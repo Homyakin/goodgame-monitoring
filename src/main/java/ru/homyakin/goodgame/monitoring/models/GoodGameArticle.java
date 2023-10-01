@@ -2,7 +2,7 @@ package ru.homyakin.goodgame.monitoring.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import ru.homyakin.goodgame.monitoring.utils.CommonUtils;
 import ru.homyakin.goodgame.monitoring.utils.DateTimeUtils;
 

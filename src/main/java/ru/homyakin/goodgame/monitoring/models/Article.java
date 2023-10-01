@@ -1,12 +1,12 @@
 package ru.homyakin.goodgame.monitoring.models;
 
-import javax.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 
 public record Article(
-    @NotNull String mediaLink,
-    @NotNull String title,
-    @NotNull String text,
-    @NotNull String link,
+    @Nonnull String mediaLink,
+    @Nonnull String title,
+    @Nonnull String text,
+    @Nonnull String link,
     long id,
     long date,
     boolean isTournament

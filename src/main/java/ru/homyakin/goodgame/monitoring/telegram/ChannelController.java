@@ -5,14 +5,13 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import javax.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.homyakin.goodgame.monitoring.config.BotConfiguration;
 import ru.homyakin.goodgame.monitoring.models.Article;
-import ru.homyakin.goodgame.monitoring.models.ApiArticle;
 import ru.homyakin.goodgame.monitoring.models.ArticleInfo;
 import ru.homyakin.goodgame.monitoring.models.EitherError;
 import ru.homyakin.goodgame.monitoring.models.SavedMessage;
@@ -38,7 +37,7 @@ public class ChannelController {
         this.userController = userController;
     }
 
-    public Either<EitherError, Message> sendArticle(@NotNull Article article) {
+    public Either<EitherError, Message> sendArticle(@Nonnull Article article) {
         try {
             logger.info("Sending new article {}", article.link());
             return switch (article.getMediaType()) {
@@ -56,7 +55,7 @@ public class ChannelController {
         }
     }
 
-    public Either<EitherError, Message> updateMessage(@NotNull Article article, @NotNull SavedMessage savedMessage) {
+    public Either<EitherError, Message> updateMessage(@Nonnull Article article, @Nonnull SavedMessage savedMessage) {
         if (article.toMessageText().equals(savedMessage.sentText())) {
             return Either.right(savedMessage.message());
         }

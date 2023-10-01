@@ -1,6 +1,6 @@
 package ru.homyakin.goodgame.monitoring.telegram;
 
-import javax.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ public class UserController {
         this.adminId = configuration.getAdminId();
     }
 
-    public void notifyAdmin(@NotNull String text) {
+    public void notifyAdmin(@Nonnull String text) {
         logger.info("Sending message to admin");
         telegramSender.send(TelegramMessageBuilder.createSendMessage(text, adminId.toString()));
     }

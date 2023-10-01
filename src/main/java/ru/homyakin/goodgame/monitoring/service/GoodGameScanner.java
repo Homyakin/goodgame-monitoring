@@ -7,13 +7,13 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.homyakin.goodgame.monitoring.models.Article;
-import ru.homyakin.goodgame.monitoring.models.ApiArticle;
 import ru.homyakin.goodgame.monitoring.models.ArticleInfo;
 import ru.homyakin.goodgame.monitoring.models.EitherError;
 import ru.homyakin.goodgame.monitoring.models.HttpError;
@@ -29,7 +29,9 @@ public class GoodGameScanner {
     private final HttpRequest newsRequest;
 
     public GoodGameScanner() {
-        client = HttpClient.newHttpClient();
+        client = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(60))
+            .build();
         newsRequest = HttpRequest.newBuilder()
             .uri(URI.create("https://goodgame.ru/news/"))
             .GET()

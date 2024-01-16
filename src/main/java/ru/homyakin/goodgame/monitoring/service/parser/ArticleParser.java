@@ -1,5 +1,6 @@
 package ru.homyakin.goodgame.monitoring.service.parser;
 
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -24,6 +25,7 @@ public class ArticleParser {
     private final static Pattern jsonEnd = Pattern.compile("}]");
     private final static ObjectMapper objectMapper = JsonMapper.builder()
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .enable(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS)
         .build();
 
     public static Either<EitherError, List<Article>> parseContent(String html) {

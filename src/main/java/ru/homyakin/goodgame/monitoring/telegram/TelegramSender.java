@@ -41,7 +41,7 @@ public class TelegramSender extends DefaultAbsSender {
             return Either.right(execute(message));
         } catch (TelegramApiException e) {
             logger.error("Something went wrong during sending message with photo", e);
-            return Either.left(new TelegramError("Unable to send message with photo\n" + CommonUtils.getStringStackTrace(e)));
+            return Either.left(new TelegramError("Unable to send message `" + message.getCaption() + "` with photo\n" + CommonUtils.getStringStackTrace(e)));
         }
     }
 

@@ -78,6 +78,12 @@ public class ArticleMonitoring {
         // Иногда бывает, что новость с большим id опубликована раньше, чем новость с меньшим, поэтому убеждаемся,
         // что 20 новостей подряд старые (максимальный случай)
         while (oldArticles < 20) {
+            try {
+                // Защита от Http: 509
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             var response = scanner.getArticleInfoById(String.valueOf(id));
             --id;
             if (response.isLeft()) {

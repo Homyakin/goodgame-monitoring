@@ -32,8 +32,11 @@ public class GoodGameScanner {
         client = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(60))
             .build();
+        /**
+         * @TODO https://goodgame.ru/api/4/index/index -> news
+         */
         newsRequest = HttpRequest.newBuilder()
-            .uri(URI.create("https://goodgame.ru/news/"))
+            .uri(URI.create("https://goodgame.ru/news"))
             .GET()
             .build();
     }
